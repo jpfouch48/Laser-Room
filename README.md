@@ -1,6 +1,8 @@
 # Laser-Room
 This project contains the code and configuration to setup an ESP8266 to monitor the environment of your laser cutter to assure the proper temp settings for your chiller based on room temperature, humidity and dew point. It also contains basic RGB funtionality to control the LED's in your system.
 
+> :warning: **This component is still under development** Use at your own risk!
+
 ## Required Components:
 * Controller - [D1 Mini](https://www.amazon.com/gp/product/B07KW54YSK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 * Room Temp Sensor - [DHT22](https://www.amazon.com/gp/product/B07WP4VZTH/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
@@ -18,19 +20,19 @@ TODO
 sensor:
   - platform: mqtt
     state_topic: "laser_room/laser_room_sensor"
-    name: "Room Temperature"
+    name: "Laser Room Temperature"
     unit_of_measurement: "F"
     value_template: "{{ value_json.temperature }}"
 
   - platform: mqtt
     state_topic: "laser_room/laser_room_sensor"
-    name: "Room Humidity"
+    name: "Laser Room Humidity"
     unit_of_measurement: "%"
     value_template: "{{ value_json.humidity }}"
 
   - platform: mqtt
     state_topic: "laser_room/laser_room_sensor"
-    name: "Room Dew Point"
+    name: "Laser Room Dew Point"
     unit_of_measurement: "F"
     value_template: "{{ value_json.dew_point }}"
 ```
@@ -40,7 +42,7 @@ sensor:
 sensor:
   - platform: mqtt
     state_topic: "laser_room/laser_room_chiller_sensor"
-    name: "Chiller Temperature"
+    name: "Laser Room Chiller Temperature"
     unit_of_measurement: "F"
     value_template: "{{ value_json.temperature }}"
 ```
@@ -50,7 +52,7 @@ sensor:
 light:  
   - platform: mqtt  
     schema: json  
-    name: "Laser LED"  
+    name: "Laser Room LED"  
     state_topic: "laser_room/laser_room_led"  
     command_topic: "laser_room/laser_room_led/set"  
     brightness: true  
@@ -59,6 +61,38 @@ light:
     optimistic: false  
     qos: 0  
 ```
+
+### Lovelace Configuration
+#### Light entry
+```
+- type: custom:light-entity-card
+  entity: light.laser_room_led
+```
+
+#### Temperature Entry
+```
+- type: custom:mini-graph-card
+  entities:
+  - entity: sensor.laser_room_temperature
+    name: Temperature
+  - entity: sensor.laser_room_humidity
+    name: Humidity
+  - entity: sensor.laser_room_dew_point
+    name: Dew Point
+  - entity: sensor.laser_room_chiller_temperature
+    name: Chiller Temperature
+  - color: gray
+    entity: input_number.nighttime
+    name: Night
+    show_line: false
+    show_points: false
+    show_legend: false
+    y_axis: secondary
+  show:
+    labels: true
+    labels_secondary: true
+```
+
 
 ## Wiring
 TODO
