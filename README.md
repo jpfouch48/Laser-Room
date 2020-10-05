@@ -17,44 +17,45 @@ TODO
 ```
 sensor:
   - platform: mqtt
-    state_topic: 'laser/room_sensor'
-    name: 'Room Temperature'
-    unit_of_measurement: 'F'
-    value_template: '{{ value_json.temperature }}'
+    state_topic: "laser_room/laser_room_sensor"
+    name: "Room Temperature"
+    unit_of_measurement: "F"
+    value_template: "{{ value_json.temperature }}"
 
   - platform: mqtt
-    state_topic: 'laser/room_sensor'
-    name: 'Room Humidity'
-    unit_of_measurement: '%'
+    state_topic: "laser_room/laser_room_sensor"
+    name: "Room Humidity"
+    unit_of_measurement: "%"
     value_template: "{{ value_json.humidity }}"
 
   - platform: mqtt
-    state_topic: 'laser/room_sensor'
-    name: 'Room Dew Point'
-    unit_of_measurement: 'F'
-    value_template: '{{ value_json.dew_point }}"
+    state_topic: "laser_room/laser_room_sensor"
+    name: "Room Dew Point"
+    unit_of_measurement: "F"
+    value_template: "{{ value_json.dew_point }}"
 ```
 
 ### Chiller Temp Sensor
 ```
 sensor:
   - platform: mqtt
-    state_topic: 'laser/chiller_sensor'
-    name: 'Chiller Temperature'
-    unit_of_measurement: 'F'
-    value_template: '{{ value_json.temperature }}'
+    state_topic: "laser_room/laser_room_chiller_sensor"
+    name: "Chiller Temperature"
+    unit_of_measurement: "F"
+    value_template: "{{ value_json.temperature }}"
 ```
 
 ### RGB Lighting
 ```
 light:  
-  - platform: mqtt_json  
+  - platform: mqtt  
+    schema: json  
     name: "Laser LED"  
-    state_topic: "laser/laser_led"  
-    command_topic: "laser/laser_led/set"  
+    state_topic: "laser_room/laser_room_led"  
+    command_topic: "laser_room/laser_room_led/set"  
     brightness: true  
-    flash: false  
     rgb: true  
+    white_value: false
     optimistic: false  
     qos: 0  
 ```

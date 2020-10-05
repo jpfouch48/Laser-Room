@@ -28,6 +28,9 @@ char gMqttBuffer[MQTT_BUFFER_WIDTH];
 // RGB Defines
 FastLedWrapper gRgbWrapper;
 
+// ****************************************************************************
+//
+// ****************************************************************************
 enum AppState
 {
   AppState_WifiConnecting,
@@ -36,6 +39,9 @@ enum AppState
 };
 AppState gAppState;
 
+// ****************************************************************************
+//
+// ****************************************************************************
 void change_state(AppState aState)
 {
   gAppState = aState;

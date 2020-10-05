@@ -25,14 +25,14 @@
 // ****************************************************************************
 
 // Room Temp Sensor - DHT - (temp, humidity and dewpoint)
-#define MQTT_ROOM_TEMP_SENSOR_TOPIC     "laser/room_sensor"
+#define MQTT_ROOM_TEMP_SENSOR_TOPIC     "laser_room/laser_room_sensor"
 
 // Chiller Temp Sensor - DS18B20 - (temp)
-#define MQTT_CHILLER_TEMP_SENSOR_TOPIC  "laser/chiller_sensor"
+#define MQTT_CHILLER_TEMP_SENSOR_TOPIC  "laser_room/laser_room_chiller_sensor"
 
 // Laser LED Sensor - RGB - WS2812B
-#define MQTT_LED_SENSOR_STATE_TOPIC     "laser/laser_led"
-#define MQTT_LED_SENSOR_SET_TOPIC       "laser/laser_led/set"
+#define MQTT_LED_SENSOR_STATE_TOPIC     "laser_room/laser_room_led"
+#define MQTT_LED_SENSOR_SET_TOPIC       "laser_room/laser_room_led/set"
 
 #define MQTT_LED_CMD_ON                 "ON"
 #define MQTT_LED_CMD_OFF                "OFF"
