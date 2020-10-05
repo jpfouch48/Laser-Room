@@ -41,7 +41,7 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  void set_color(CRGB aValue)          { mPattern->set_color(aValue); }
+//  void set_color(CRGB aValue)          { mPattern->set_color(aValue); }
   void set_color_red(uint8_t aValue)   { mPattern->set_color_red(aValue); }
   void set_color_green(uint8_t aValue) { mPattern->set_color_green(aValue); }
   void set_color_blue(uint8_t aValue)  { mPattern->set_color_blue(aValue); }  
@@ -60,6 +60,15 @@ public:
 
     mPattern->reset();
   }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  uint8_t get_color_red()   { return mPattern->get_color_red(); }
+  uint8_t get_color_green() { return mPattern->get_color_green(); }
+  uint8_t get_color_blue()  { return mPattern->get_color_blue(); }  
+  uint8_t get_brightness()  { return mPattern->get_brightness(); }  
+  bool    get_enabled()     { return mPattern->get_enabled(); }
 
   // **************************************************************************
   //

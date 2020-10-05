@@ -21,10 +21,7 @@ DallasTempWrapper gChillerTemp(DS18B20_PIN);
 WiFiClient gWifiClient;
 PubSubClient gMqttClient(gWifiClient);
 
-// Used for string manipulations and buffer management
-#define SZ_BUFFER_WIDTH 128
-char gSzBuffer[SZ_BUFFER_WIDTH];
-
+// GLOBAL MQTT MSG BUFFER
 #define MQTT_BUFFER_WIDTH 256
 char gMqttBuffer[MQTT_BUFFER_WIDTH];
 
@@ -45,17 +42,23 @@ void change_state(AppState aState)
 
   if(gAppState == AppState::AppState_WifiConnecting)
   {
-    gRgbWrapper.set_color(CRGB(255, 0, 0));
+    gRgbWrapper.set_color_red(255);
+    gRgbWrapper.set_color_green(0);
+    gRgbWrapper.set_color_blue(0);
     Serial.println("Changing to WifiConnecting state");
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
   {
-    gRgbWrapper.set_color(CRGB(0, 255, 0));
+    gRgbWrapper.set_color_red(0);
+    gRgbWrapper.set_color_green(255);
+    gRgbWrapper.set_color_blue(0);
     Serial.println("Changing to MqttConnecting state");
   }
   else if(gAppState == AppState::AppState_Running)
   {
-    gRgbWrapper.set_color(CRGB(255, 255, 255));
+    gRgbWrapper.set_color_red(255);
+    gRgbWrapper.set_color_green(255);
+    gRgbWrapper.set_color_blue(255);
     Serial.println("Changing to Running state");    
   }
 }
@@ -73,7 +76,10 @@ void setup()
 
   // Setup RGB
   gRgbWrapper.setup();
-  gRgbWrapper.set_color(CRGB(255, 0, 0));
+  gRgbWrapper.set_color_red(255);
+  gRgbWrapper.set_color_green(0);
+  gRgbWrapper.set_color_blue(0);
+  
   gRgbWrapper.set_brightness(50);
   gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
 
@@ -128,9 +134,11 @@ void loop()
         Serial.println("Connecting to MQTT");
 
         if (gMqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_USER_PW)) 
-        {
+        {          
           Serial.println("Connected to MQTT");
           change_state(AppState::AppState_Running);
+          gMqttClient.subscribe(MQTT_LED_SENSOR_SET_TOPIC);
+          publish_led_data();
         }
         else 
         {
@@ -194,59 +202,73 @@ void loop()
 // ****************************************************************************
 void mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength) 
 {
-//  Serial.print("mqtt_callback - ");
-//  Serial.print("Topic: ");
-//  Serial.println(aTopic);
-//
-//  if(aLength > MQTT_BUFFER_WIDTH)
-//  {
-//    // TODO: LOG AN ERROR - MESSAGE IS TO LARGE FOR BUFFER
-//    Serial.println("Payload to large");
-//  }
-//  else
-//  {
-//    memcpy(gMqttBuffer, aPayload, aLength);
-//    gMqttBuffer[aLength] = '\0';
-//
-//    Serial.print("  Payload: ");
-//    Serial.println(gMqttBuffer);
-//
-//    if(0 == strcmp(aTopic, MQTT_TOP_RGB_POWER))
-//    {
-//      if(0 == strcmp(gMqttBuffer, "ON"))
-//      {
-//        gRgbWrapper.set_enabled(true);
-//        gMqttClient.publish(aTopic, "ON");
-//      }
-//      else
-//      {        
-//        gRgbWrapper.set_enabled(false);
-//        gMqttClient.publish(aTopic, "OFF");
-//      }
-//    }
-//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORR))
-//    {
-//      gRgbWrapper.set_color_red(atoi(gMqttBuffer));
-//      gMqttClient.publish(aTopic, gMqttBuffer);      
-//    }
-//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORG))
-//    {
-//      gRgbWrapper.set_color_green(atoi(gMqttBuffer));
-//      gMqttClient.publish(aTopic, gMqttBuffer);      
-//    }
-//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORB))
-//    {
-//      gRgbWrapper.set_color_blue(atoi(gMqttBuffer));
-//      gMqttClient.publish(aTopic, gMqttBuffer);      
-//    }
-//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_BRIGHTNESS))
-//    {
-//      gRgbWrapper.set_brightness(atoi(gMqttBuffer));
-//      gMqttClient.publish(aTopic, gMqttBuffer);      
-//    }
-//  }
+  Serial.print("mqtt_callback - ");
+  Serial.print("Topic: ");
+  Serial.println(aTopic);
+
+  if(aLength > MQTT_BUFFER_WIDTH)
+  {
+    // TODO: LOG AN ERROR - MESSAGE IS TO LARGE FOR BUFFER
+    Serial.println("Payload to large");
+  }
+  else
+  {
+    memcpy(gMqttBuffer, aPayload, aLength);
+    gMqttBuffer[aLength] = '\0';
+
+    Serial.print("  Payload: ");
+    Serial.println(gMqttBuffer);
+
+    parse_json(gMqttBuffer);
+  }
 }
 
+// ****************************************************************************
+//     {
+//        "state":       "ON or OFF" ,
+//        "color" "r":   "0 - 255",
+//        "color" "g":   "0 - 255",
+//        "color" "b":   "0 - 255",
+//        "brightness":  "0 - 255"
+//     }
+// ****************************************************************************
+bool parse_json(char *aMsgBuffer)
+{
+  StaticJsonBuffer<200> lJsonBuffer;
+  JsonObject& lRoot = lJsonBuffer.parseObject(aMsgBuffer);
+
+  if (!lRoot.success()) 
+  {
+    Serial.println("parseObject() failed");
+    return false;
+  }  
+
+  if (lRoot.containsKey("state")) 
+  {
+    if (strcmp(lRoot["state"], MQTT_LED_CMD_ON) == 0) 
+    {
+      gRgbWrapper.set_enabled(true);      
+    }
+    else if (strcmp(lRoot["state"], MQTT_LED_CMD_OFF) == 0) 
+    {
+      gRgbWrapper.set_enabled(false);
+    }
+  }  
+
+  if (lRoot.containsKey("color")) 
+  {
+    gRgbWrapper.set_color_red(atoi(lRoot["color"]["r"]));
+    gRgbWrapper.set_color_green(atoi(lRoot["color"]["g"]));
+    gRgbWrapper.set_color_blue(atoi(lRoot["color"]["b"]));
+  }  
+ 
+  if (lRoot.containsKey("brightness")) 
+  {
+    gRgbWrapper.set_brightness(atoi(lRoot["brightness"]));
+  }  
+
+  return true;
+}
 
 // ****************************************************************************
 //     {
@@ -287,6 +309,31 @@ void publish_chiller_temp_data(char *aTemp)
   
 #ifndef DO_NOT_CONNECT  
   gMqttClient.publish(MQTT_CHILLER_TEMP_SENSOR_TOPIC, lSzBuffer, true);
+#endif
+
+  yield();  
+}
+
+// ****************************************************************************
+//
+// ****************************************************************************
+void publish_led_data()
+{
+  StaticJsonBuffer<200> lJsonBuffer;
+  static char lSzBuffer[200];
+  JsonObject& lRoot = lJsonBuffer.createObject();
+  lRoot["state"] = (gRgbWrapper.get_enabled()) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
+  lRoot["brightness"] = gRgbWrapper.get_brightness();
+
+  JsonObject& lColor = lRoot.createNestedObject("color");
+  lColor["r"] = gRgbWrapper.get_color_red();
+  lColor["g"] = gRgbWrapper.get_color_green();
+  lColor["b"] = gRgbWrapper.get_color_blue();
+
+  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+  
+#ifndef DO_NOT_CONNECT  
+  gMqttClient.publish(MQTT_LED_SENSOR_STATE_TOPIC, lSzBuffer, true);
 #endif
 
   yield();  
