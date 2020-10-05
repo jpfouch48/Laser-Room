@@ -8,13 +8,13 @@
 //  WIFI_SSID     - SSID of wireless network you want to connect to
 //  WIFI_SSID_PW  - Password of wireless network  
 // ****************************************************************************
-#define WIFI_SSID =     "[Redacted]"
-#define WIFI_SSID_PW    "[Redacted]"
+#define WIFI_SSID                   "[Redacted]"
+#define WIFI_SSID_PW                "[Redacted]"
 
 // ****************************************************************************
 // MQTT Defines
 // ****************************************************************************
-#define MQTT_SERVER_IP              "192.168.1.3"
+#define MQTT_SERVER_IP              "[Redacted]"
 #define MQTT_SERVER_PORT            1883
 #define MQTT_USER                   "[Redacted]"
 #define MQTT_USER_PW                "[Redacted]"
