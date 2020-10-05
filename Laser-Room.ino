@@ -7,17 +7,14 @@
 
 // Local Includes
 #include "Configuration.h"
-#include "TempWrapper.h"
+#include "DHTWrapper.h"
+#include "DallasTempWrapper.h"
 #include "FastLedWrapper.h"
 
 
-#include <OneWire.h> 
-#include <DallasTemperature.h>
-
-// Temp Wrapper
-TempWrapper gTempWrapper(DHT_PIN);
-OneWire gOneWire(DS18B20_PIN); 
-DallasTemperature gChillerSensors(&gOneWire);
+// Temp Wrappers
+DHTWrapper gDHTRoomTemp(DHT_PIN);
+DallasTempWrapper gChillerTemp(DS18B20_PIN);
 
 // Connection Wrappers
 WiFiClient gWifiClient;
@@ -69,9 +66,9 @@ void setup()
 {  
   Serial.begin(9600);
 
-  // Setup Temp Sensor
-  gTempWrapper.setup();
-  gChillerSensors.begin();
+  // Setup Temp Sensors
+  gDHTRoomTemp.setup();
+  gChillerTemp.setup();
 
   // Setup RGB
   gRgbWrapper.setup();
@@ -164,26 +161,29 @@ void loop()
 
       EVERY_N_MILLISECONDS(5000)     
       {
-        // Chiller temp processing
-        gChillerSensors.requestTemperatures();
-#ifndef DO_NOT_CONNECT  
-        gMqttClient.publish(MQTT_TOPIC_CHILLER_TEMP, dtostrf(gChillerSensors.getTempCByIndex(0),      7, 3, gSzBuffer), true);    
-#endif
-        Serial.print("Chiller Temp: "); 
-        Serial.println(dtostrf(gChillerSensors.getTempFByIndex(0),      7, 3, gSzBuffer));
 
-        // Room Temp Processing
-        if(true == gTempWrapper.loop())
+        // Chiller temp processing
+        if(true == gChillerTemp.loop())
         {
 #ifndef DO_NOT_CONNECT  
-          gMqttClient.publish(MQTT_TOPIC_ROOM_TEMP,     dtostrf(gTempWrapper.get_temp(),      7, 3, gSzBuffer), true);    
-          gMqttClient.publish(MQTT_TOPIC_ROOM_HUMIDITY, dtostrf(gTempWrapper.get_humidity(),  7, 3, gSzBuffer), true);    
-          gMqttClient.publish(MQTT_TOPIC_ROOM_DEWPOINT, dtostrf(gTempWrapper.get_dew_point(), 7, 3, gSzBuffer), true);    
+          gMqttClient.publish(MQTT_TOPIC_CHILLER_TEMP, dtostrf(gChillerTemp.get_temp(),      7, 3, gSzBuffer), true);    
+#endif
+          Serial.print("Chiller Temp: "); 
+          Serial.println(dtostrf(gChillerTemp.get_temp(),      7, 3, gSzBuffer));
+        }
+
+        // Room Temp Processing
+        if(true == gDHTRoomTemp.loop())
+        {
+#ifndef DO_NOT_CONNECT  
+          gMqttClient.publish(MQTT_TOPIC_ROOM_TEMP,     dtostrf(gDHTRoomTemp.get_temp(),      7, 3, gSzBuffer), true);    
+          gMqttClient.publish(MQTT_TOPIC_ROOM_HUMIDITY, dtostrf(gDHTRoomTemp.get_humidity(),  7, 3, gSzBuffer), true);    
+          gMqttClient.publish(MQTT_TOPIC_ROOM_DEWPOINT, dtostrf(gDHTRoomTemp.get_dew_point(), 7, 3, gSzBuffer), true);    
 #endif
 
-          Serial.print("Temp: ");        Serial.print(dtostrf(gTempWrapper.get_temp(),      7, 3, gSzBuffer));
-          Serial.print(" Humidity: ");   Serial.print(dtostrf(gTempWrapper.get_humidity(),  7, 3, gSzBuffer));
-          Serial.print(" Dew Point: ");  Serial.print(dtostrf(gTempWrapper.get_dew_point(), 7, 3, gSzBuffer));
+          Serial.print("Temp: ");        Serial.print(dtostrf(gDHTRoomTemp.get_temp(),      7, 3, gSzBuffer));
+          Serial.print(" Humidity: ");   Serial.print(dtostrf(gDHTRoomTemp.get_humidity(),  7, 3, gSzBuffer));
+          Serial.print(" Dew Point: ");  Serial.print(dtostrf(gDHTRoomTemp.get_dew_point(), 7, 3, gSzBuffer));
           Serial.println();
         }
       }
