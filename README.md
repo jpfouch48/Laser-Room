@@ -17,19 +17,19 @@ TODO
 ```
 sensor:
   - platform: mqtt
-    state_topic: 'laser/room_temp_sensor'
+    state_topic: 'laser/room_sensor'
     name: 'Room Temperature'
     unit_of_measurement: 'F'
     value_template: '{{ value_json.temperature }}'
 
   - platform: mqtt
-    state_topic: 'laser/room_temp_sensor'
+    state_topic: 'laser/room_sensor'
     name: 'Room Humidity'
     unit_of_measurement: '%'
     value_template: "{{ value_json.humidity }}"
 
   - platform: mqtt
-    state_topic: 'laser/room_temp_sensor'
+    state_topic: 'laser/room_sensor'
     name: 'Room Dew Point'
     unit_of_measurement: 'F'
     value_template: '{{ value_json.dew_point }}"
@@ -38,13 +38,13 @@ sensor:
 ```
 sensor:
   - platform: mqtt
-    state_topic: 'laser/chiller_temp_sensor'
+    state_topic: 'laser/chiller_sensor'
     name: 'Chiller Temperature'
     unit_of_measurement: 'F'
     value_template: '{{ value_json.temperature }}'
 ```
 ### RGB Lighting
-
+TODO
 
 ## Wiring
 TODO
