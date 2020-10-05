@@ -4,6 +4,7 @@
 // WIFI/MQTT Includes
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 
 // Local Includes
 #include "Configuration.h"
@@ -126,7 +127,7 @@ void loop()
       {
         Serial.println("Connecting to MQTT");
 
-        if (gMqttClient.connect(MQTT_SENSOR_NAME, MQTT_USER, MQTT_USER_PW)) 
+        if (gMqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_USER_PW)) 
         {
           Serial.println("Connected to MQTT");
           change_state(AppState::AppState_Running);
@@ -165,26 +166,20 @@ void loop()
         // Chiller temp processing
         if(true == gChillerTemp.loop())
         {
-#ifndef DO_NOT_CONNECT  
-          gMqttClient.publish(MQTT_TOPIC_CHILLER_TEMP, dtostrf(gChillerTemp.get_temp(),      7, 3, gSzBuffer), true);    
-#endif
-          Serial.print("Chiller Temp: "); 
-          Serial.println(dtostrf(gChillerTemp.get_temp(),      7, 3, gSzBuffer));
+          publish_chiller_temp_data(gChillerTemp.get_sz_temp());
+          Serial.print("Chiller Temp: "); Serial.println(gChillerTemp.get_sz_temp());
         }
 
         // Room Temp Processing
         if(true == gDHTRoomTemp.loop())
         {
-#ifndef DO_NOT_CONNECT  
-          gMqttClient.publish(MQTT_TOPIC_ROOM_TEMP,     dtostrf(gDHTRoomTemp.get_temp(),      7, 3, gSzBuffer), true);    
-          gMqttClient.publish(MQTT_TOPIC_ROOM_HUMIDITY, dtostrf(gDHTRoomTemp.get_humidity(),  7, 3, gSzBuffer), true);    
-          gMqttClient.publish(MQTT_TOPIC_ROOM_DEWPOINT, dtostrf(gDHTRoomTemp.get_dew_point(), 7, 3, gSzBuffer), true);    
-#endif
+          publish_room_temp_data(gDHTRoomTemp.get_sz_temp(), 
+                                 gDHTRoomTemp.get_sz_humidity(), 
+                                 gDHTRoomTemp.get_sz_dew_point());
 
-          Serial.print("Temp: ");        Serial.print(dtostrf(gDHTRoomTemp.get_temp(),      7, 3, gSzBuffer));
-          Serial.print(" Humidity: ");   Serial.print(dtostrf(gDHTRoomTemp.get_humidity(),  7, 3, gSzBuffer));
-          Serial.print(" Dew Point: ");  Serial.print(dtostrf(gDHTRoomTemp.get_dew_point(), 7, 3, gSzBuffer));
-          Serial.println();
+          Serial.print("Room Temp:      "); Serial.println(gDHTRoomTemp.get_sz_temp());
+          Serial.print("Room Humidity:  "); Serial.println(gDHTRoomTemp.get_sz_humidity());
+          Serial.print("Room Dew Point: "); Serial.println(gDHTRoomTemp.get_sz_dew_point());
         }
       }
     }
@@ -199,55 +194,100 @@ void loop()
 // ****************************************************************************
 void mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength) 
 {
-  Serial.print("mqtt_callback - ");
-  Serial.print("Topic: ");
-  Serial.println(aTopic);
+//  Serial.print("mqtt_callback - ");
+//  Serial.print("Topic: ");
+//  Serial.println(aTopic);
+//
+//  if(aLength > MQTT_BUFFER_WIDTH)
+//  {
+//    // TODO: LOG AN ERROR - MESSAGE IS TO LARGE FOR BUFFER
+//    Serial.println("Payload to large");
+//  }
+//  else
+//  {
+//    memcpy(gMqttBuffer, aPayload, aLength);
+//    gMqttBuffer[aLength] = '\0';
+//
+//    Serial.print("  Payload: ");
+//    Serial.println(gMqttBuffer);
+//
+//    if(0 == strcmp(aTopic, MQTT_TOP_RGB_POWER))
+//    {
+//      if(0 == strcmp(gMqttBuffer, "ON"))
+//      {
+//        gRgbWrapper.set_enabled(true);
+//        gMqttClient.publish(aTopic, "ON");
+//      }
+//      else
+//      {        
+//        gRgbWrapper.set_enabled(false);
+//        gMqttClient.publish(aTopic, "OFF");
+//      }
+//    }
+//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORR))
+//    {
+//      gRgbWrapper.set_color_red(atoi(gMqttBuffer));
+//      gMqttClient.publish(aTopic, gMqttBuffer);      
+//    }
+//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORG))
+//    {
+//      gRgbWrapper.set_color_green(atoi(gMqttBuffer));
+//      gMqttClient.publish(aTopic, gMqttBuffer);      
+//    }
+//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORB))
+//    {
+//      gRgbWrapper.set_color_blue(atoi(gMqttBuffer));
+//      gMqttClient.publish(aTopic, gMqttBuffer);      
+//    }
+//    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_BRIGHTNESS))
+//    {
+//      gRgbWrapper.set_brightness(atoi(gMqttBuffer));
+//      gMqttClient.publish(aTopic, gMqttBuffer);      
+//    }
+//  }
+}
 
-  if(aLength > MQTT_BUFFER_WIDTH)
-  {
-    // TODO: LOG AN ERROR - MESSAGE IS TO LARGE FOR BUFFER
-    Serial.println("Payload to large");
-  }
-  else
-  {
-    memcpy(gMqttBuffer, aPayload, aLength);
-    gMqttBuffer[aLength] = '\0';
 
-    Serial.print("  Payload: ");
-    Serial.println(gMqttBuffer);
+// ****************************************************************************
+//     {
+//        "temperature": "23.20" ,
+//        "humidity": "43.70",
+//        "dewpoint": "55.30"
+//     }
+// ****************************************************************************
+void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint)
+{
+  StaticJsonBuffer<200> lJsonBuffer;
+  static char lSzBuffer[200];
+  JsonObject& lRoot = lJsonBuffer.createObject();
+  lRoot["temperature"] = aTemp;
+  lRoot["humidity"]    = aHumidity;
+  lRoot["dewpoint"]    = aDewPoint;
+  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
 
-    if(0 == strcmp(aTopic, MQTT_TOP_RGB_POWER))
-    {
-      if(0 == strcmp(gMqttBuffer, "ON"))
-      {
-        gRgbWrapper.set_enabled(true);
-        gMqttClient.publish(aTopic, "ON");
-      }
-      else
-      {        
-        gRgbWrapper.set_enabled(false);
-        gMqttClient.publish(aTopic, "OFF");
-      }
-    }
-    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORR))
-    {
-      gRgbWrapper.set_color_red(atoi(gMqttBuffer));
-      gMqttClient.publish(aTopic, gMqttBuffer);      
-    }
-    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORG))
-    {
-      gRgbWrapper.set_color_green(atoi(gMqttBuffer));
-      gMqttClient.publish(aTopic, gMqttBuffer);      
-    }
-    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_COLORB))
-    {
-      gRgbWrapper.set_color_blue(atoi(gMqttBuffer));
-      gMqttClient.publish(aTopic, gMqttBuffer);      
-    }
-    else if(0 == strcmp(aTopic, MQTT_TOP_RGB_BRIGHTNESS))
-    {
-      gRgbWrapper.set_brightness(atoi(gMqttBuffer));
-      gMqttClient.publish(aTopic, gMqttBuffer);      
-    }
-  }
+#ifndef DO_NOT_CONNECT  
+  gMqttClient.publish(MQTT_ROOM_TEMP_SENSOR_TOPIC, lSzBuffer, true);
+#endif
+
+  yield();  
+}
+
+// ****************************************************************************
+//     {
+//        "temperature": "23.20"
+//     }
+// ****************************************************************************
+void publish_chiller_temp_data(char *aTemp)
+{
+  StaticJsonBuffer<200> lJsonBuffer;
+  static char lSzBuffer[200];
+  JsonObject& lRoot = lJsonBuffer.createObject();
+  lRoot["temperature"] = aTemp;
+  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+  
+#ifndef DO_NOT_CONNECT  
+  gMqttClient.publish(MQTT_CHILLER_TEMP_SENSOR_TOPIC, lSzBuffer, true);
+#endif
+
+  yield();  
 }

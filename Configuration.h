@@ -12,26 +12,28 @@
 #define WIFI_SSID_PW                "[Redacted]"
 
 // ****************************************************************************
-// MQTT Defines
+// MQTT Client/Server Defines
 // ****************************************************************************
 #define MQTT_SERVER_IP              "[Redacted]"
 #define MQTT_SERVER_PORT            1883
 #define MQTT_USER                   "[Redacted]"
 #define MQTT_USER_PW                "[Redacted]"
+#define MQTT_CLIENT_ID              "mqtt_laser_room"
 
-#define MQTT_SENSOR_NAME            "MQTT_LASER_UTIL_001"
+// ****************************************************************************
+// MQTT Message Defines
+// ****************************************************************************
+
+// Room Temp Sensor - DHT - (temp, humidity and dewpoint)
+#define MQTT_ROOM_TEMP_SENSOR_TOPIC "laser/room_temp_sensor"
+
+// Chiller Temp Sensor - DS18B20 - (temp)
+#define MQTT_CHILLER_TEMP_SENSOR_TOPIC "laser/chiller_temp_sensor"
+
 
 // MQTT Base Topics
-#define MQTT_BASE_TOPIC             "sensor/" MQTT_SENSOR_NAME "/laser/"
+#define MQTT_BASE_TOPIC             "sensor/" MQTT_CLIENT_ID "/laser/"
 #define MQTT_ALL_TOPICS             MQTT_BASE_TOPIC "#"
-
-// MQTT Room Temp Topics
-#define MQTT_TOPIC_ROOM_TEMP        MQTT_BASE_TOPIC "room_temperature" 
-#define MQTT_TOPIC_ROOM_HUMIDITY    MQTT_BASE_TOPIC "room_humidity" 
-#define MQTT_TOPIC_ROOM_DEWPOINT    MQTT_BASE_TOPIC "room_dewpoint" 
-
-// MQTT Room Temp Topics
-#define MQTT_TOPIC_CHILLER_TEMP     MQTT_BASE_TOPIC "chiller_temp"
 
 // MQTT RGB Topics
 #define MQTT_TOP_RGB_POWER          MQTT_BASE_TOPIC "rgb_power"
