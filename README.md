@@ -12,7 +12,6 @@ This project contains the code and configuration to setup an ESP8266 to monitor 
 ## ESP8266 - Laser Room Configuration
 TODO
 
-
 ## Home Assistant Configuration:
 
 ### Room Temp Sensor
@@ -97,6 +96,10 @@ light:
 ## Wiring
 TODO
 
+## OTA Processing
+TODO
 
 ## Future Enhancements
-- [] TODO
+- [ ] Add over the air updates
+- [ ] Complete HA documentation
+- [ ] Add support for PIR to turn on leds when motion is detected
