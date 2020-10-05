@@ -14,6 +14,7 @@ TODO
 ## Home Assistant Configuration:
 
 ### Room Temp Sensor
+'''
 sensor:
   - platform: mqtt
     state_topic: 'laser/room_temp_sensor'
@@ -32,15 +33,16 @@ sensor:
     name: 'Room Dew Point'
     unit_of_measurement: 'F'
     value_template: '{{ value_json.dew_point }}"
-
+'''
 ### Chiller Temp Sensor
+'''
 sensor:
   - platform: mqtt
     state_topic: 'laser/chiller_temp_sensor'
     name: 'Chiller Temperature'
     unit_of_measurement: 'F'
     value_template: '{{ value_json.temperature }}'
-
+'''
 ### RGB Lighting
 
 
