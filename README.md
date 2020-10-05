@@ -103,3 +103,5 @@ TODO
 - [ ] Add over the air updates
 - [ ] Complete HA documentation
 - [ ] Add support for PIR to turn on leds when motion is detected
+- [ ] Add effects to LED component
+- [ ] Create status component to send general info back to HA
