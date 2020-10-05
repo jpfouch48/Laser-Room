@@ -25,10 +25,10 @@
 // ****************************************************************************
 
 // Room Temp Sensor - DHT - (temp, humidity and dewpoint)
-#define MQTT_ROOM_TEMP_SENSOR_TOPIC "laser/room_temp_sensor"
+#define MQTT_ROOM_TEMP_SENSOR_TOPIC "laser/room_sensor"
 
 // Chiller Temp Sensor - DS18B20 - (temp)
-#define MQTT_CHILLER_TEMP_SENSOR_TOPIC "laser/chiller_temp_sensor"
+#define MQTT_CHILLER_TEMP_SENSOR_TOPIC "laser/chiller_sensor"
 
 
 // MQTT Base Topics
