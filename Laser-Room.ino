@@ -5,6 +5,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+#include <ArduinoOTA.h>
 
 // Local Includes
 #include "Configuration.h"
@@ -35,7 +36,8 @@ enum AppState
 {
   AppState_WifiConnecting,
   AppState_MqttConnecting,
-  AppState_Running
+  AppState_Running,
+  AppState_Updating
 };
 AppState gAppState;
 
@@ -51,6 +53,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(255);
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(0);
+    gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
     Serial.println("Changing to WifiConnecting state");
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
@@ -65,7 +68,16 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(255);
     gRgbWrapper.set_color_green(255);
     gRgbWrapper.set_color_blue(255);
+    gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Solid);
     Serial.println("Changing to Running state");    
+  }
+  else if (gAppState == AppState::AppState_Updating)
+  {
+    gRgbWrapper.set_color_red(0);
+    gRgbWrapper.set_color_green(0);
+    gRgbWrapper.set_color_blue(255);
+    gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
+    Serial.println("Changing to Updating state");    
   }
 }
 
@@ -81,13 +93,8 @@ void setup()
   gChillerTemp.setup();
 
   // Setup RGB
-  gRgbWrapper.setup();
-  gRgbWrapper.set_color_red(255);
-  gRgbWrapper.set_color_green(0);
-  gRgbWrapper.set_color_blue(0);
-  
-  gRgbWrapper.set_brightness(50);
-  gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
+  gRgbWrapper.setup(); 
+  gRgbWrapper.set_brightness(50); 
 
 #ifndef DO_NOT_CONNECT  
   delay(10);
@@ -97,6 +104,36 @@ void setup()
   Serial.println(WIFI_SSID);
 
   WiFi.begin(WIFI_SSID, WIFI_SSID_PW);
+
+#ifndef DISABLE_OTA
+  ArduinoOTA.setHostname(OTA_HOSTNAME);
+  ArduinoOTA.setPassword(OTA_PW);  
+  ArduinoOTA.onStart([]() 
+  { 
+    Serial.println("OTA Start"); 
+    change_state(AppState::AppState_Updating);    
+  });
+
+  ArduinoOTA.onEnd([]()   
+  { 
+    Serial.println("OTA Complete"); 
+    change_state(AppState::AppState_Running);    
+  });
+  
+//  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) { Serial.printf("Progress: %u%%\r", (progress / (total / 100)));  });
+
+  ArduinoOTA.onError([](ota_error_t error) 
+  {
+    Serial.printf("OTA Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR)         Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR)   Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR)     Serial.println("End Failed");
+  });
+  ArduinoOTA.begin();
+  Serial.println("OTA ready");  
+#endif
 
   change_state(AppState::AppState_WifiConnecting);
 #else
@@ -198,6 +235,9 @@ void loop()
       }
     }
   }
+
+  // OTA Processing
+  ArduinoOTA.handle();    
 
   // RGB Processing
   gRgbWrapper.loop();
