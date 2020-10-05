@@ -97,7 +97,7 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  void set_color(CRGB aValue)          { mColor      = aValue; }
+//  void set_color(CRGB aValue)          { mColor      = aValue; }
   void set_color_red(uint8_t aValue)   { mColor.r    = aValue; }
   void set_color_green(uint8_t aValue) { mColor.g    = aValue; }
   void set_color_blue(uint8_t aValue)  { mColor.b    = aValue; }  
@@ -125,7 +125,12 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  bool get_enabled() { return mEnabled; }
+  bool    get_enabled()     { return mEnabled; }
+  uint8_t get_color_red()   { return mColor.r; }
+  uint8_t get_color_green() { return mColor.g; }
+  uint8_t get_color_blue()  { return mColor.b; }  
+  uint8_t get_brightness()  { return mBrightness; }  
+
 
 protected:
   virtual bool init(CRGB *aLeds, int aNumLeds) { return true; };

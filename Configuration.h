@@ -25,22 +25,17 @@
 // ****************************************************************************
 
 // Room Temp Sensor - DHT - (temp, humidity and dewpoint)
-#define MQTT_ROOM_TEMP_SENSOR_TOPIC "laser/room_sensor"
+#define MQTT_ROOM_TEMP_SENSOR_TOPIC     "laser/room_sensor"
 
 // Chiller Temp Sensor - DS18B20 - (temp)
-#define MQTT_CHILLER_TEMP_SENSOR_TOPIC "laser/chiller_sensor"
+#define MQTT_CHILLER_TEMP_SENSOR_TOPIC  "laser/chiller_sensor"
 
+// Laser LED Sensor - RGB - WS2812B
+#define MQTT_LED_SENSOR_STATE_TOPIC     "laser/laser_led"
+#define MQTT_LED_SENSOR_SET_TOPIC       "laser/laser_led/set"
 
-// MQTT Base Topics
-#define MQTT_BASE_TOPIC             "sensor/" MQTT_CLIENT_ID "/laser/"
-#define MQTT_ALL_TOPICS             MQTT_BASE_TOPIC "#"
-
-// MQTT RGB Topics
-#define MQTT_TOP_RGB_POWER          MQTT_BASE_TOPIC "rgb_power"
-#define MQTT_TOP_RGB_COLORR         MQTT_BASE_TOPIC "rgb_colorr"
-#define MQTT_TOP_RGB_COLORG         MQTT_BASE_TOPIC "rgb_colorg"
-#define MQTT_TOP_RGB_COLORB         MQTT_BASE_TOPIC "rgb_colorb"
-#define MQTT_TOP_RGB_BRIGHTNESS     MQTT_BASE_TOPIC "rgb_brightness"
+#define MQTT_LED_CMD_ON                 "ON"
+#define MQTT_LED_CMD_OFF                "OFF"
 
 // ****************************************************************************
 // OTA Defines

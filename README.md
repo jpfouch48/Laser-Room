@@ -34,6 +34,7 @@ sensor:
     unit_of_measurement: 'F'
     value_template: '{{ value_json.dew_point }}"
 ```
+
 ### Chiller Temp Sensor
 ```
 sensor:
@@ -43,8 +44,20 @@ sensor:
     unit_of_measurement: 'F'
     value_template: '{{ value_json.temperature }}'
 ```
+
 ### RGB Lighting
-TODO
+```
+light:  
+  - platform: mqtt_json  
+    name: "Laser LED"  
+    state_topic: "laser/laser_led"  
+    command_topic: "laser/laser_led/set"  
+    brightness: true  
+    flash: false  
+    rgb: true  
+    optimistic: false  
+    qos: 0  
+```
 
 ## Wiring
 TODO
