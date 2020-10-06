@@ -54,8 +54,11 @@ public:
 
       case PatternState::PatterState_Complete:
       default:
-        Serial.println("Running Complete State");
-        // Do nothing here as this pattern ran to completion
+        EVERY_N_MILLISECONDS(5000) 
+        {      
+          Serial.println("Running Complete State");
+          // Do nothing here as this pattern ran to completion
+        }
       break;
     }
 
@@ -73,23 +76,24 @@ public:
     switch(mState)
     {
       case PatternState::PatterState_Init:
-        Serial.println("Entering Init State");
+        Serial.println("FL: Entering Init State");
       break;
 
       case PatternState::PatterState_Process:
-        Serial.println("Entering Process State");
+        Serial.println("FL: Entering Process State");
       break;
 
       case PatternState::PatterState_End:
-        Serial.println("Entering End State");
+        Serial.println("FL: Entering End State");
       break;    
 
       case PatternState::PatterState_Complete:
-        Serial.println("Entering Complete State");
+        Serial.println("FL: Entering Complete State");
       break;
 
       default:
-        Serial.println("Unknown State");
+        
+        Serial.println("FL: Unknown State");
       break;
     }
   }
@@ -97,7 +101,7 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  void set_color(CRGB aValue)          { mColor      = aValue; }
+//  void set_color(CRGB aValue)          { mColor      = aValue; }
   void set_color_red(uint8_t aValue)   { mColor.r    = aValue; }
   void set_color_green(uint8_t aValue) { mColor.g    = aValue; }
   void set_color_blue(uint8_t aValue)  { mColor.b    = aValue; }  
@@ -112,12 +116,12 @@ public:
 
     if(mEnabled == true)
     {
-      Serial.println("Pattern Enabled - Init State");
+      Serial.println("FL: Pattern Enabled - Init State");
       set_state(PatternState::PatterState_Init);
     }
     else
     {
-      Serial.println("Pattern Disabled - End State");
+      Serial.println("FL: Pattern Disabled - End State");
       set_state(PatternState::PatterState_End);
     }
   }
@@ -125,7 +129,12 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  bool get_enabled() { return mEnabled; }
+  bool    get_enabled()     { return mEnabled; }
+  uint8_t get_color_red()   { return mColor.r; }
+  uint8_t get_color_green() { return mColor.g; }
+  uint8_t get_color_blue()  { return mColor.b; }  
+  uint8_t get_brightness()  { return mBrightness; }  
+
 
 protected:
   virtual bool init(CRGB *aLeds, int aNumLeds) { return true; };
