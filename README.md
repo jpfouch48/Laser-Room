@@ -33,7 +33,7 @@ sensor:
     state_topic: "laser_room/laser_room_sensor"
     name: "Laser Room Dew Point"
     unit_of_measurement: "F"
-    value_template: "{{ value_json.dew_point }}"
+    value_template: "{{ value_json.dewpoint }}"
 ```
 
 ### Chiller Temp Sensor
@@ -76,7 +76,17 @@ sensor
 ```
 
 ### Lovelace Configuration
-#### Light entry
+
+#### Status Entry
+```
+- type: entities
+  title: Laser Room Info
+  entities:          
+    - sensor.laser_room_version
+    - sensor.laser_room_ip
+```
+
+#### Light Entry
 ```
 - type: custom:light-entity-card
   entity: light.laser_room_led
@@ -84,26 +94,41 @@ sensor
 
 #### Temperature Entry
 ```
-- type: custom:mini-graph-card
-  entities:
-  - entity: sensor.laser_room_temperature
-    name: Temperature
-  - entity: sensor.laser_room_humidity
-    name: Humidity
-  - entity: sensor.laser_room_dew_point
-    name: Dew Point
-  - entity: sensor.laser_room_chiller_temperature
-    name: Chiller Temperature
-  - color: gray
-    entity: input_number.nighttime
-    name: Night
-    show_line: false
-    show_points: false
-    show_legend: false
-    y_axis: secondary
-  show:
-    labels: true
-    labels_secondary: true
+- type: horizontal-stack
+  cards:
+    - type: custom:mini-graph-card
+      entities:
+        - sensor.laser_room_temperature
+      line_color: blue
+      line_width: 8
+      font_size: 75
+    - type: custom:mini-graph-card
+      entities:
+        - sensor.laser_room_dew_point
+      line_color: var(--accent-color)
+      line_width: 8
+      font_size: 75
+- type: horizontal-stack
+  cards:
+    - type: custom:mini-graph-card
+      entities:
+        - sensor.laser_room_humidity
+      line_color: '#e74c3c'
+      line_width: 8
+      font_size: 75
+    - type: custom:mini-graph-card
+      entities:
+        - sensor.laser_room_chiller_temperature
+      line_color: var(--accent-color)
+      line_width: 8
+      font_size: 75
+      color_thresholds:                
+      - value: 0
+        color: "#0000FF"
+      - value: 68
+        color: "#00FF00"
+      - value: 75.5
+        color: "#FF0000"
 ```
 
 
