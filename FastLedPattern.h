@@ -54,8 +54,11 @@ public:
 
       case PatternState::PatterState_Complete:
       default:
-        Serial.println("Running Complete State");
-        // Do nothing here as this pattern ran to completion
+        EVERY_N_MILLISECONDS(5000) 
+        {      
+          Serial.println("Running Complete State");
+          // Do nothing here as this pattern ran to completion
+        }
       break;
     }
 
@@ -89,6 +92,7 @@ public:
       break;
 
       default:
+        
         Serial.println("FL: Unknown State");
       break;
     }
