@@ -139,8 +139,10 @@ TODO
 TODO
 
 ## Future Enhancements
-- [ ] Add over the air updates
-- [ ] Complete HA documentation
-- [ ] Add support for PIR to turn on leds when motion is detected
+- [X] Complete HA documentation
+- [X] Create status component to send general info back to HA
+- [ ] Add over the air updates - Implemented, needs to be tested
 - [ ] Add effects to LED component
-- [ ] Create status component to send general info back to HA
+- [ ] Add zones to LEDs to allow different zones to be controlled independently
+- [ ] Add ability to control without the need for Home Assistant
+- [ ] Add support for PIR to turn on leds when motion is detected
