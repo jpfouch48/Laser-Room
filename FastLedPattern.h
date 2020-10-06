@@ -73,23 +73,23 @@ public:
     switch(mState)
     {
       case PatternState::PatterState_Init:
-        Serial.println("Entering Init State");
+        Serial.println("FL: Entering Init State");
       break;
 
       case PatternState::PatterState_Process:
-        Serial.println("Entering Process State");
+        Serial.println("FL: Entering Process State");
       break;
 
       case PatternState::PatterState_End:
-        Serial.println("Entering End State");
+        Serial.println("FL: Entering End State");
       break;    
 
       case PatternState::PatterState_Complete:
-        Serial.println("Entering Complete State");
+        Serial.println("FL: Entering Complete State");
       break;
 
       default:
-        Serial.println("Unknown State");
+        Serial.println("FL: Unknown State");
       break;
     }
   }
@@ -112,12 +112,12 @@ public:
 
     if(mEnabled == true)
     {
-      Serial.println("Pattern Enabled - Init State");
+      Serial.println("FL: Pattern Enabled - Init State");
       set_state(PatternState::PatterState_Init);
     }
     else
     {
-      Serial.println("Pattern Disabled - End State");
+      Serial.println("FL: Pattern Disabled - End State");
       set_state(PatternState::PatterState_End);
     }
   }
