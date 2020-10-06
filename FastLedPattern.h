@@ -21,7 +21,7 @@ public:
   // **************************************************************************
   FastLedPattern(CRGB aColor, uint8_t aBrightness) : 
     mColor(aColor),
-    mEnabled(false),
+    mEnabled(true),
     mBrightness(aBrightness),
     mDelay(1000)
   { 
@@ -62,7 +62,6 @@ public:
       break;
     }
 
-//    FastLED.setBrightness(mBrightness);
     FastLED.show();
   }
 
