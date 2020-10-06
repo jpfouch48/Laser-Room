@@ -5,7 +5,7 @@
 //#define DISABLE_OTA
 //#define DISABLE_MQTT
 
-#define APP_VERSION                 "0.0.5"
+#define APP_VERSION                 "0.0.6"
 
 // ****************************************************************************
 // WIFI Defines

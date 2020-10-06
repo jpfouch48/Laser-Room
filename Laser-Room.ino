@@ -42,12 +42,13 @@ int gChangeCount = 0;
 // ****************************************************************************
 enum AppState
 {
+  AppState_Init,
   AppState_WifiConnecting,
   AppState_MqttConnecting,
   AppState_Running,
   AppState_Updating
 };
-AppState gAppState;
+AppState gAppState(AppState_Init);
 
 // ****************************************************************************
 //
@@ -88,6 +89,10 @@ void change_state(AppState aState)
     gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
     Serial.println("Changing to Updating state");    
   }
+  else if(gAppState == AppState::AppState_Init)
+  {
+    Serial.println("Changing to Updating init");    
+  }
 }
 
 // ****************************************************************************
@@ -105,14 +110,14 @@ void setup()
   gRgbWrapper.setup(); 
   gRgbWrapper.set_brightness(50); 
 
+  change_state(AppState::AppState_Init);    
+
 #ifndef DISABLE_WIFI  
   delay(10);
-  // We start by connecting to a WiFi network
-  Serial.println();
+  WiFi.begin(WIFI_SSID, WIFI_SSID_PW);
+
   Serial.print("Connecting to ");
   Serial.println(WIFI_SSID);
-
-  WiFi.begin(WIFI_SSID, WIFI_SSID_PW);
 
 #ifndef DISABLE_OTA
   ArduinoOTA.setHostname(OTA_HOSTNAME);
@@ -153,7 +158,7 @@ void setup()
 //
 // ****************************************************************************
 void loop()
-{
+{  
   if(gAppState == AppState::AppState_WifiConnecting)
   {
     EVERY_N_MILLISECONDS(5000)     
@@ -167,12 +172,12 @@ void loop()
           WiFi.localIP()[2], 
           WiFi.localIP()[3]);
 
-        Serial.println("");
-        Serial.println("WiFi connected");
-        Serial.println("IP address: ");
+        Serial.print("WIFI Connected to ");
+        Serial.println(WIFI_SSID);
+        Serial.print("IP address: ");
         Serial.println(WiFi.localIP());
 
-#ifdef DISABLE-MQTT
+#ifndef DISABLE-MQTT
         gMqttClient.setServer(MQTT_SERVER_IP, MQTT_SERVER_PORT);  
         gMqttClient.setCallback(mqtt_callback);  
 #endif
@@ -181,7 +186,8 @@ void loop()
       }
       else
       {
-        Serial.println("Connecting to WIFI");
+        Serial.print("Connecting to ");
+        Serial.println(WIFI_SSID);
       }
     }
 #else
@@ -194,7 +200,7 @@ void loop()
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
   {
-    EVERY_N_MILLISECONDS(5000)     
+    EVERY_N_MILLISECONDS(10000)     
     {
 #ifndef DISABLE_MQTT      
       if (!gMqttClient.connected()) 
@@ -207,18 +213,21 @@ void loop()
           change_state(AppState::AppState_Running);
           gMqttClient.subscribe(MQTT_LED_SENSOR_SET_TOPIC);
           publish_led_data();
+          publish_status_data();
         }
         else 
         {
           Serial.print("failed, rc=");
           Serial.print(gMqttClient.state());
-          Serial.println(" try again in 5 seconds");
+          Serial.println(" try again in 10 seconds");
+          yield();  
         }
       }
       else
       {
          change_state(AppState::AppState_Running);
       }      
+    }
 #else
     }
     // Throttle state transiton when WIFI is disabled to better
@@ -237,7 +246,6 @@ void loop()
     }  
     else
 #endif  
-
     {
 
 #ifndef DISABLE_MQTT  
@@ -251,7 +259,6 @@ void loop()
         if(true == gChillerTemp.loop())
         {
           publish_chiller_temp_data(gChillerTemp.get_sz_temp());
-          Serial.print("Chiller Temp: "); Serial.println(gChillerTemp.get_sz_temp());
         }
 
         // Room Temp Processing
@@ -260,10 +267,6 @@ void loop()
           publish_room_temp_data(gDHTRoomTemp.get_sz_temp(), 
                                  gDHTRoomTemp.get_sz_humidity(), 
                                  gDHTRoomTemp.get_sz_dew_point());
-
-          Serial.print("Room Temp:      "); Serial.println(gDHTRoomTemp.get_sz_temp());
-          Serial.print("Room Humidity:  "); Serial.println(gDHTRoomTemp.get_sz_humidity());
-          Serial.print("Room Dew Point: "); Serial.println(gDHTRoomTemp.get_sz_dew_point());
         }
       }
     }
@@ -317,6 +320,9 @@ bool parse_json(char *aMsgBuffer)
 {
   StaticJsonBuffer<200> lJsonBuffer;
   JsonObject& lRoot = lJsonBuffer.parseObject(aMsgBuffer);
+  bool lPublishLedData = false;
+
+
 
   if (!lRoot.success()) 
   {
@@ -334,6 +340,7 @@ bool parse_json(char *aMsgBuffer)
     {
       gRgbWrapper.set_enabled(false);
     }
+    lPublishLedData = true;
   }  
 
   if (lRoot.containsKey("color")) 
@@ -341,12 +348,17 @@ bool parse_json(char *aMsgBuffer)
     gRgbWrapper.set_color_red(atoi(lRoot["color"]["r"]));
     gRgbWrapper.set_color_green(atoi(lRoot["color"]["g"]));
     gRgbWrapper.set_color_blue(atoi(lRoot["color"]["b"]));
+    lPublishLedData = true;
   }  
  
   if (lRoot.containsKey("brightness")) 
   {
     gRgbWrapper.set_brightness(atoi(lRoot["brightness"]));
+    lPublishLedData = true;
   }  
+
+  if(lPublishLedData)
+    publish_led_data();
 
   return true;
 }
@@ -367,6 +379,9 @@ void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint)
   lRoot["humidity"]    = aHumidity;
   lRoot["dewpoint"]    = aDewPoint;
   lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+ 
+  Serial.print("Room Temp Message: ");
+  Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  
   gMqttClient.publish(MQTT_ROOM_TEMP_SENSOR_TOPIC, lSzBuffer, true);
@@ -388,6 +403,9 @@ void publish_chiller_temp_data(char *aTemp)
   lRoot["temperature"] = aTemp;
   lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
   
+  Serial.print("Chiller Temp Message: ");
+  Serial.println(lSzBuffer);
+
 #ifndef DISABLE_MQTT  
   gMqttClient.publish(MQTT_CHILLER_TEMP_SENSOR_TOPIC, lSzBuffer, true);
 #endif
@@ -413,6 +431,9 @@ void publish_led_data()
 
   lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
   
+  Serial.print("Led Message: ");
+  Serial.println(lSzBuffer);
+
 #ifndef DISABLE_MQTT  
   gMqttClient.publish(MQTT_LED_SENSOR_STATE_TOPIC, lSzBuffer, true);
 #endif
@@ -435,6 +456,9 @@ void publish_status_data()
   lRoot["ip"]      = gIpAddress;
   lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
  
+  Serial.print("Status Message: ");
+  Serial.println(lSzBuffer);
+
 #ifndef DISABLE_MQTT  
   gMqttClient.publish(MQTT_ROOM_STATUS_SENSOR_TOPIC, lSzBuffer, true);
 #endif
