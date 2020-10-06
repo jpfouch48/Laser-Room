@@ -61,6 +61,20 @@ light:
     qos: 0  
 ```
 
+### RGB Status
+```
+sensor
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_status_sensor"
+    name: "Laser Room Version"
+    value_template: "{{ value_json.version }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_status_sensor"
+    name: "Laser Room IP"
+    value_template: "{{ value_json.ip }}"
+```
+
 ### Lovelace Configuration
 #### Light entry
 ```

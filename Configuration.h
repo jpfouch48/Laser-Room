@@ -1,8 +1,11 @@
 #ifndef CONFIGURATION_HEADER
 #define CONFIGURATION_HEADER
 
-//#define DO_NOT_CONNECT
+//#define DISABLE_WIFI
 //#define DISABLE_OTA
+//#define DISABLE_MQTT
+
+#define APP_VERSION                 "0.0.5"
 
 // ****************************************************************************
 // WIFI Defines
@@ -38,6 +41,11 @@
 #define MQTT_LED_CMD_ON                 "ON"
 #define MQTT_LED_CMD_OFF                "OFF"
 
+// Led Room Status 
+#define MQTT_ROOM_STATUS_SENSOR_TOPIC   "laser_room/laser_room_status_sensor"
+
+
+
 // ****************************************************************************
 // OTA Defines
 // ****************************************************************************
@@ -61,5 +69,10 @@
 #define RGB_LED_TYPE                WS2812B
 #define RGB_COLOR_ORDER             GRB
 #define RGB_NUM_LEDS                20
+
+
+// Include a configuration private file to house
+// your private configs you don't want to store in git
+#include "ConfigurationPrivate.h"
 
 #endif // CONFIGURATION_HEADER
