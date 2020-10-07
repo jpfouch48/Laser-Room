@@ -21,7 +21,15 @@ This project contains the code and configuration to setup an ESP8266 to monitor 
 | ArduinoOTA   | jandrassy/ArduinoOTA                           | 1.0.5        |
 
 ## ESP8266 - Laser Room Configuration
-TODO
+1. Create ConfigurationPrivate.h in the root directory of this project. This file is to house any defines you don't want to commit (e.g. passwords)
+2. Add to the ConfigurationPrivate.h file anything you want to change for your project. 
+  
+### Configuration items to update
+- WIFI_SSID      - This is your wifi SSID you want to connect to
+- WIFI_SSID_PW   - This is your wifi password
+- MQTT_SERVER_IP - IP or Hostname of your MQTT server
+- MQTT_USER      - MQTT username
+- MQTT_USER_PW   - MQTT password
 
 ## Home Assistant Configuration:
 
