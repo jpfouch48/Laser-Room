@@ -63,7 +63,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(255);
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(0);
-    gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
+    gRgbWrapper.set_effect("cylon");
     Serial.println("Changing to WifiConnecting state");
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
@@ -78,7 +78,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(255);
     gRgbWrapper.set_color_green(255);
     gRgbWrapper.set_color_blue(255);
-    gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Solid);
+    gRgbWrapper.set_effect("solid");
     Serial.println("Changing to Running state");    
   }
   else if (gAppState == AppState::AppState_Updating)
@@ -86,7 +86,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(0);
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(255);
-    gRgbWrapper.set_pattern(FastLedWrapper::PatternType::Pattern_Cylon);
+    gRgbWrapper.set_effect("cylon");
     Serial.println("Changing to Updating state");    
   }
   else if(gAppState == AppState::AppState_Init)
@@ -134,7 +134,13 @@ void setup()
     change_state(AppState::AppState_Running);    
   });
   
-//  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) { Serial.printf("Progress: %u%%\r", (progress / (total / 100)));  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) 
+  { 
+    EVERY_N_MILLISECONDS(1000)     
+    {
+      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    }
+  });
 
   ArduinoOTA.onError([](ota_error_t error) 
   {
@@ -145,8 +151,6 @@ void setup()
     else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
     else if (error == OTA_END_ERROR)     Serial.println("End Failed");
   });
-  ArduinoOTA.begin();
-  Serial.println("OTA ready");  
 #endif
 
 #endif
@@ -182,6 +186,10 @@ void loop()
         gMqttClient.setCallback(mqtt_callback);  
 #endif
 
+#ifndef DISABLE_OTA
+        ArduinoOTA.begin();
+        Serial.println("OTA ready");  
+#endif
         change_state(AppState::AppState_MqttConnecting);
       }
       else
@@ -314,48 +322,54 @@ void mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength)
 //        "color" "g":   "0 - 255",
 //        "color" "b":   "0 - 255",
 //        "brightness":  "0 - 255"
+//        "effect:"      "effect_name"
 //     }
 // ****************************************************************************
 bool parse_json(char *aMsgBuffer)
 {
-  StaticJsonBuffer<200> lJsonBuffer;
-  JsonObject& lRoot = lJsonBuffer.parseObject(aMsgBuffer);
+  StaticJsonDocument<200> lJsonBuffer;
   bool lPublishLedData = false;
+  auto error = deserializeJson(lJsonBuffer, aMsgBuffer);
 
-
-
-  if (!lRoot.success()) 
+  if(error)
   {
-    Serial.println("parseObject() failed");
+    Serial.print("parse_json: deserializeJson failed -  ");
+    Serial.println(error.c_str());
     return false;
-  }  
+  }
 
-  if (lRoot.containsKey("state")) 
+  if (lJsonBuffer.containsKey("state")) 
   {
-    if (strcmp(lRoot["state"], MQTT_LED_CMD_ON) == 0) 
+    if (strcmp(lJsonBuffer["state"], MQTT_LED_CMD_ON) == 0) 
     {
       gRgbWrapper.set_enabled(true);      
     }
-    else if (strcmp(lRoot["state"], MQTT_LED_CMD_OFF) == 0) 
+    else if (strcmp(lJsonBuffer["state"], MQTT_LED_CMD_OFF) == 0) 
     {
       gRgbWrapper.set_enabled(false);
     }
     lPublishLedData = true;
   }  
 
-  if (lRoot.containsKey("color")) 
+  if (lJsonBuffer.containsKey("color")) 
   {
-    gRgbWrapper.set_color_red(atoi(lRoot["color"]["r"]));
-    gRgbWrapper.set_color_green(atoi(lRoot["color"]["g"]));
-    gRgbWrapper.set_color_blue(atoi(lRoot["color"]["b"]));
+    gRgbWrapper.set_color_red(atoi(lJsonBuffer["color"]["r"]));
+    gRgbWrapper.set_color_green(atoi(lJsonBuffer["color"]["g"]));
+    gRgbWrapper.set_color_blue(atoi(lJsonBuffer["color"]["b"]));
     lPublishLedData = true;
   }  
  
-  if (lRoot.containsKey("brightness")) 
+  if (lJsonBuffer.containsKey("brightness")) 
   {
-    gRgbWrapper.set_brightness(atoi(lRoot["brightness"]));
+    gRgbWrapper.set_brightness(atoi(lJsonBuffer["brightness"]));
     lPublishLedData = true;
   }  
+
+  if (lJsonBuffer.containsKey("effect"))
+  {
+    gRgbWrapper.set_effect(lJsonBuffer["effect"]);
+    lPublishLedData = true;
+  }
 
   if(lPublishLedData)
     publish_led_data();
@@ -372,13 +386,12 @@ bool parse_json(char *aMsgBuffer)
 // ****************************************************************************
 void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint)
 {
-  StaticJsonBuffer<200> lJsonBuffer;
+  StaticJsonDocument<200> lJsonBuffer;
   static char lSzBuffer[200];
-  JsonObject& lRoot = lJsonBuffer.createObject();
-  lRoot["temperature"] = aTemp;
-  lRoot["humidity"]    = aHumidity;
-  lRoot["dewpoint"]    = aDewPoint;
-  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+  lJsonBuffer["temperature"] = aTemp;
+  lJsonBuffer["humidity"]    = aHumidity;
+  lJsonBuffer["dewpoint"]    = aDewPoint;
+  serializeJson(lJsonBuffer, lSzBuffer);
  
   Serial.print("Room Temp Message: ");
   Serial.println(lSzBuffer);
@@ -397,11 +410,10 @@ void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint)
 // ****************************************************************************
 void publish_chiller_temp_data(char *aTemp)
 {
-  StaticJsonBuffer<200> lJsonBuffer;
+  StaticJsonDocument<200> lJsonBuffer;
   static char lSzBuffer[200];
-  JsonObject& lRoot = lJsonBuffer.createObject();
-  lRoot["temperature"] = aTemp;
-  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+  lJsonBuffer["temperature"] = aTemp;
+  serializeJson(lJsonBuffer, lSzBuffer);
   
   Serial.print("Chiller Temp Message: ");
   Serial.println(lSzBuffer);
@@ -418,18 +430,18 @@ void publish_chiller_temp_data(char *aTemp)
 // ****************************************************************************
 void publish_led_data()
 {
-  StaticJsonBuffer<200> lJsonBuffer;
+  StaticJsonDocument<200> lJsonBuffer;
   static char lSzBuffer[200];
-  JsonObject& lRoot = lJsonBuffer.createObject();
-  lRoot["state"] = (gRgbWrapper.get_enabled()) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
-  lRoot["brightness"] = gRgbWrapper.get_brightness();
+  lJsonBuffer["state"]      = (gRgbWrapper.get_enabled()) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
+  lJsonBuffer["brightness"] = gRgbWrapper.get_brightness();
+  lJsonBuffer['effect']     = gRgbWrapper.get_effect_name();
 
-  JsonObject& lColor = lRoot.createNestedObject("color");
-  lColor["r"] = gRgbWrapper.get_color_red();
-  lColor["g"] = gRgbWrapper.get_color_green();
-  lColor["b"] = gRgbWrapper.get_color_blue();
+  JsonObject lColor  = lJsonBuffer.createNestedObject("color");
+  lColor["r"]        = gRgbWrapper.get_color_red();
+  lColor["g"]        = gRgbWrapper.get_color_green();
+  lColor["b"]        = gRgbWrapper.get_color_blue();
 
-  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+  serializeJson(lJsonBuffer, lSzBuffer);
   
   Serial.print("Led Message: ");
   Serial.println(lSzBuffer);
@@ -449,12 +461,11 @@ void publish_led_data()
 // ****************************************************************************
 void publish_status_data()
 {
-  StaticJsonBuffer<200> lJsonBuffer;
+  StaticJsonDocument<200> lJsonBuffer;
   static char lSzBuffer[200];
-  JsonObject& lRoot = lJsonBuffer.createObject();
-  lRoot["version"] = APP_VERSION;
-  lRoot["ip"]      = gIpAddress;
-  lRoot.printTo(lSzBuffer, lRoot.measureLength() + 1);
+  lJsonBuffer["version"] = APP_VERSION;
+  lJsonBuffer["ip"]      = gIpAddress;
+  serializeJson(lJsonBuffer, lSzBuffer);
  
   Serial.print("Status Message: ");
   Serial.println(lSzBuffer);
