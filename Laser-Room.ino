@@ -63,7 +63,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(255);
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(0);
-    gRgbWrapper.set_pattern("cylon");
+    gRgbWrapper.set_effect("cylon");
     Serial.println("Changing to WifiConnecting state");
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
@@ -78,7 +78,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(255);
     gRgbWrapper.set_color_green(255);
     gRgbWrapper.set_color_blue(255);
-    gRgbWrapper.set_pattern("solid");
+    gRgbWrapper.set_effect("solid");
     Serial.println("Changing to Running state");    
   }
   else if (gAppState == AppState::AppState_Updating)
@@ -86,7 +86,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_red(0);
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(255);
-    gRgbWrapper.set_pattern("cylon");
+    gRgbWrapper.set_effect("cylon");
     Serial.println("Changing to Updating state");    
   }
   else if(gAppState == AppState::AppState_Init)
@@ -136,11 +136,9 @@ void setup()
   
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) 
   { 
-    gOTAProgress = (progress / (total / 100));   
-
     EVERY_N_MILLISECONDS(1000)     
     {
-      Serial.printf("Progress: %u%%\r", gOTAProgress);
+      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
     }
   });
 
@@ -369,7 +367,7 @@ bool parse_json(char *aMsgBuffer)
 
   if (lJsonBuffer.containsKey("effect"))
   {
-    gRgbWrapper.set_pattern(lJsonBuffer["effect"]);
+    gRgbWrapper.set_effect(lJsonBuffer["effect"]);
     lPublishLedData = true;
   }
 
@@ -436,7 +434,7 @@ void publish_led_data()
   static char lSzBuffer[200];
   lJsonBuffer["state"]      = (gRgbWrapper.get_enabled()) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
   lJsonBuffer["brightness"] = gRgbWrapper.get_brightness();
-  lJsonBuffer['effect']     = gRgbWrapper.get_pattern_name();
+  lJsonBuffer['effect']     = gRgbWrapper.get_effect_name();
 
   JsonObject lColor  = lJsonBuffer.createNestedObject("color");
   lColor["r"]        = gRgbWrapper.get_color_red();
