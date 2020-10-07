@@ -19,7 +19,8 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  FastLedPattern(CRGB aColor, uint8_t aBrightness) : 
+  FastLedPattern(char *aPatternName, CRGB aColor, uint8_t aBrightness) : 
+    mPatternName(aPatternName),
     mColor(aColor),
     mEnabled(true),
     mBrightness(aBrightness),
@@ -128,12 +129,12 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  bool    get_enabled()     { return mEnabled; }
-  uint8_t get_color_red()   { return mColor.r; }
-  uint8_t get_color_green() { return mColor.g; }
-  uint8_t get_color_blue()  { return mColor.b; }  
-  uint8_t get_brightness()  { return mBrightness; }  
-
+  bool         get_enabled()      const { return mEnabled; }
+  uint8_t      get_color_red()    const { return mColor.r; }
+  uint8_t      get_color_green()  const { return mColor.g; }
+  uint8_t      get_color_blue()   const { return mColor.b; }  
+  uint8_t      get_brightness()   const { return mBrightness; }  
+  const char * get_pattern_name() const { return mPatternName; }
 
 protected:
   virtual bool init(CRGB *aLeds, int aNumLeds) { return true; };
@@ -147,6 +148,7 @@ protected:
 
 private:
   PatternState mState;
+  char        *mPatternName;
 };
 
 // ****************************************************************************
@@ -156,7 +158,7 @@ class FastLedPatternSolid : public FastLedPattern
 {
 public:
   FastLedPatternSolid(CRGB aColor, uint8_t aBrightness) : 
-    FastLedPattern(aColor, aBrightness),
+    FastLedPattern("solid", aColor, aBrightness),
     mHasInit(false),
     mHasEnd(false),
     mFadeBrightness(0),
@@ -243,7 +245,7 @@ class FastLedPatternTwinkle : public FastLedPattern
 {
 public:
   FastLedPatternTwinkle(CRGB aColor, uint8_t aBrightness) : 
-    FastLedPattern(aColor, aBrightness),
+    FastLedPattern("twinkle", aColor, aBrightness),
     mDelay(100),
     mCount(1)
   { 
@@ -297,7 +299,7 @@ class FastLedPatternCylon : public FastLedPattern
 {
 public:
   FastLedPatternCylon(CRGB aColor, uint8_t aBrightness) : 
-    FastLedPattern(aColor, aBrightness),
+    FastLedPattern("cylon", aColor, aBrightness),
     mReturnDelay(50),
     mDelay(10),    
     mSize(5),
@@ -397,12 +399,5 @@ private:
   int mInc;
   int mIndex;
 };
-
-
-
-
-
-
-
 
 #endif

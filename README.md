@@ -3,11 +3,14 @@ This project contains the code and configuration to setup an ESP8266 to monitor 
 
 > :warning: **This component is still under development** Use at your own risk!
 
-## Required Components:
+## Required Hardware Components:
 * Controller - [D1 Mini](https://www.amazon.com/gp/product/B07KW54YSK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 * Room Temp Sensor - [DHT22](https://www.amazon.com/gp/product/B07WP4VZTH/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 * Chiller Temp Sensor - [DS18B20](https://www.amazon.com/gp/product/B087JQ6MCP/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 * RGB Led Strip - [WS2812B](https://www.amazon.com/gp/product/B01CDTEID0/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+
+## Required Software Packages:
+TODO
 
 ## ESP8266 - Laser Room Configuration
 TODO
@@ -58,6 +61,11 @@ light:
     rgb: true  
     white_value: false
     optimistic: false  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
     qos: 0  
 ```
 
@@ -141,8 +149,10 @@ TODO
 ## Future Enhancements
 - [X] Complete HA documentation
 - [X] Create status component to send general info back to HA
+- [X] Add effects to LED component
+- [X] Upgrade to ArduinoJson 6
+- [ ] Update to have arduino send effect list to be more dynamic
 - [ ] Add over the air updates - Implemented, needs to be tested
-- [ ] Add effects to LED component
 - [ ] Add zones to LEDs to allow different zones to be controlled independently
 - [ ] Add ability to control without the need for Home Assistant
 - [ ] Add support for PIR to turn on leds when motion is detected

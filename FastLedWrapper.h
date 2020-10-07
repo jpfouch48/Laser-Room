@@ -11,6 +11,7 @@
 #endif
 
 #include "FastLedPattern.h"
+#include "LinkedList.h"
 
 // ****************************************************************************
 //
@@ -19,14 +20,6 @@ class FastLedWrapper
 {
 public:
 
-  enum PatternType
-  {
-    Pattern_Solid,
-    Pattern_Twinkle,
-    Pattern_Cylon
-  };
-
-
   // **************************************************************************
   //
   // **************************************************************************
@@ -34,41 +27,57 @@ public:
     mPatternSolid(CRGB(50,50,50), 50),
     mPatternTwinkle(CRGB(50,50,50), 50),
     mPatternCylon(CRGB(50,50,50), 50),
-    mPattern(&mPatternCylon)
+    mCurrentPattern(&mPatternCylon),
+    mPatternList()
   {
+    mPatternList.push_back(&mPatternSolid);
+    mPatternList.push_back(&mPatternTwinkle);
+    mPatternList.push_back(&mPatternCylon);
   }
 
   // **************************************************************************
   //
   // **************************************************************************
-//  void set_color(CRGB aValue)          { mPattern->set_color(aValue); }
-  void set_color_red(uint8_t aValue)   { mPattern->set_color_red(aValue); }
-  void set_color_green(uint8_t aValue) { mPattern->set_color_green(aValue); }
-  void set_color_blue(uint8_t aValue)  { mPattern->set_color_blue(aValue); }  
-  void set_brightness(uint8_t aValue)  { mPattern->set_brightness(aValue); }  
-  void set_enabled(bool aValue)        { mPattern->set_enabled(aValue); }
+  void set_color_red(uint8_t aValue)   { mCurrentPattern->set_color_red(aValue); }
+  void set_color_green(uint8_t aValue) { mCurrentPattern->set_color_green(aValue); }
+  void set_color_blue(uint8_t aValue)  { mCurrentPattern->set_color_blue(aValue); }  
+  void set_brightness(uint8_t aValue)  { mCurrentPattern->set_brightness(aValue); }  
+  void set_enabled(bool aValue)        { mCurrentPattern->set_enabled(aValue); }
 
-  void set_pattern(PatternType aPattern)
+  bool set_pattern(const char *aPatternName)
   {
-    if(aPattern == PatternType::Pattern_Cylon)
-      mPattern = &mPatternCylon;
-    else if(aPattern == Pattern_Twinkle)
-      mPattern = &mPatternTwinkle;
-    else
-      mPattern = &mPatternSolid;  
+    Iterator<FastLedPattern*> lIter = mPatternList.begin();
 
+    while(lIter != NULL)
+    {
+      if(0 == strcmp(aPatternName, (*lIter)->get_pattern_name()))
+      {
+        Serial.print("Found pattern: ");
+        Serial.println(aPatternName);
 
-    mPattern->reset();
+        mCurrentPattern = *lIter; 
+        mCurrentPattern->reset();
+        return true;
+      }
+
+      lIter++;
+    }
+
+    Serial.print("Unknown pattern: ");
+    Serial.println(aPatternName);
+
+    return false;
   }
 
   // **************************************************************************
   //
   // **************************************************************************
-  uint8_t get_color_red()   { return mPattern->get_color_red(); }
-  uint8_t get_color_green() { return mPattern->get_color_green(); }
-  uint8_t get_color_blue()  { return mPattern->get_color_blue(); }  
-  uint8_t get_brightness()  { return mPattern->get_brightness(); }  
-  bool    get_enabled()     { return mPattern->get_enabled(); }
+  uint8_t get_color_red()         const { return mCurrentPattern->get_color_red(); }
+  uint8_t get_color_green()       const { return mCurrentPattern->get_color_green(); }
+  uint8_t get_color_blue()        const { return mCurrentPattern->get_color_blue(); }  
+  uint8_t get_brightness()        const { return mCurrentPattern->get_brightness(); }  
+  bool    get_enabled()           const { return mCurrentPattern->get_enabled(); }
+  const char * get_pattern_name() const { return mCurrentPattern->get_pattern_name(); }
 
   // **************************************************************************
   //
@@ -79,7 +88,7 @@ public:
     FastLED.addLeds<RGB_LED_TYPE, RGB_PIN, RGB_COLOR_ORDER>(mLeds, RGB_NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setMaxPowerInVoltsAndMilliamps(12, 10000); //experimental for power management. Feel free to try in your own setup.
 
-    mPattern->set_enabled(true);
+    mCurrentPattern->set_enabled(true);
 
     loop();
   }
@@ -89,17 +98,18 @@ public:
   // **************************************************************************
   void loop()
   {
-    mPattern->loop(mLeds, RGB_NUM_LEDS);
+    mCurrentPattern->loop(mLeds, RGB_NUM_LEDS);
   }
 
 protected:
 
 private:
-  CRGB                  mLeds[RGB_NUM_LEDS];
-  FastLedPattern       *mPattern;
-  FastLedPatternSolid   mPatternSolid;
-  FastLedPatternTwinkle mPatternTwinkle;
-  FastLedPatternCylon   mPatternCylon;
+  CRGB                        mLeds[RGB_NUM_LEDS];
+  FastLedPattern             *mCurrentPattern;
+  FastLedPatternSolid         mPatternSolid;
+  FastLedPatternTwinkle       mPatternTwinkle;
+  FastLedPatternCylon         mPatternCylon;
+  LinkedList<FastLedPattern*> mPatternList;
 };
 
 #endif
