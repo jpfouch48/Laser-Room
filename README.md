@@ -152,8 +152,7 @@ TODO
 - [X] Create status component to send general info back to HA
 - [X] Add effects to LED component
 - [X] Upgrade to ArduinoJson 6
-- [X] Add over the air updates - Implemented, needs to be tested
-- [ ] Add update status to the MQTT interface so we can show the OTA progress
+- [X] Add over the air updates
 - [ ] Update to have arduino send effect list to be more dynamic
 - [ ] Add zones to LEDs to allow different zones to be controlled independently
 - [ ] Add ability to control without the need for Home Assistant
