@@ -134,7 +134,15 @@ void setup()
     change_state(AppState::AppState_Running);    
   });
   
-//  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) { Serial.printf("Progress: %u%%\r", (progress / (total / 100)));  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) 
+  { 
+    gOTAProgress = (progress / (total / 100));   
+
+    EVERY_N_MILLISECONDS(1000)     
+    {
+      Serial.printf("Progress: %u%%\r", gOTAProgress);
+    }
+  });
 
   ArduinoOTA.onError([](ota_error_t error) 
   {
