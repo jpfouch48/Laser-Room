@@ -145,8 +145,6 @@ void setup()
     else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
     else if (error == OTA_END_ERROR)     Serial.println("End Failed");
   });
-  ArduinoOTA.begin();
-  Serial.println("OTA ready");  
 #endif
 
 #endif
@@ -182,6 +180,10 @@ void loop()
         gMqttClient.setCallback(mqtt_callback);  
 #endif
 
+#ifndef DISABLE_OTA
+        ArduinoOTA.begin();
+        Serial.println("OTA ready");  
+#endif
         change_state(AppState::AppState_MqttConnecting);
       }
       else

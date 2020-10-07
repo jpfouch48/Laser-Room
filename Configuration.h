@@ -5,7 +5,7 @@
 //#define DISABLE_OTA
 //#define DISABLE_MQTT
 
-#define APP_VERSION                 "0.0.7"
+#define APP_VERSION                 "0.0.9"
 
 // ****************************************************************************
 // WIFI Defines
@@ -50,7 +50,7 @@
 // OTA Defines
 // ****************************************************************************
 #define OTA_HOSTNAME                MQTT_CLIENT_ID
-#define OTA_PW                      "LaserRoom"
+#define OTA_PW                      ""
 #define OTA_PORT                    8266
 
 // ****************************************************************************
