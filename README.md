@@ -3,11 +3,22 @@ This project contains the code and configuration to setup an ESP8266 to monitor 
 
 > :warning: **This component is still under development** Use at your own risk!
 
-## Required Components:
-* Controller - [D1 Mini](https://www.amazon.com/gp/product/B07KW54YSK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-* Room Temp Sensor - [DHT22](https://www.amazon.com/gp/product/B07WP4VZTH/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+## Required Hardware Components:
+* Controller          - [D1 Mini](https://www.amazon.com/gp/product/B07KW54YSK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+* Room Temp Sensor    - [DHT22](https://www.amazon.com/gp/product/B07WP4VZTH/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 * Chiller Temp Sensor - [DS18B20](https://www.amazon.com/gp/product/B087JQ6MCP/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-* RGB Led Strip - [WS2812B](https://www.amazon.com/gp/product/B01CDTEID0/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+* RGB Led Strip       - [WS2812B](https://www.amazon.com/gp/product/B01CDTEID0/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+
+## Required Software Packages:
+| Name         | Git Repo                                       | Version      |
+|--------------|------------------------------------------------|-------------:|
+| OneWire      | PaulStoffregen/OneWire                         | 2.3.5        |
+| Dallas Temp  | milesburton/Arduino-Temperature-Control-Library| 3.9.0        |
+| DHTesp       | beegee-tokyo/arduino-DHTesp                    | Src Include  |
+| Fast LED     | FastLED/FastLED                                | 3.3.0        |
+| PubSubClient | knolleary/pubsubclient                         | 2.8.0        |
+| ArduinoJson  | bblanchon/ArduinoJson                          | 6.16.1       |
+| ArduinoOTA   | jandrassy/ArduinoOTA                           | 1.0.5        |
 
 ## ESP8266 - Laser Room Configuration
 TODO
@@ -58,6 +69,11 @@ light:
     rgb: true  
     white_value: false
     optimistic: false  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
     qos: 0  
 ```
 
@@ -94,53 +110,50 @@ sensor
 
 #### Temperature Entry
 ```
-- type: horizontal-stack
-  cards:
-    - type: custom:mini-graph-card
-      entities:
-        - sensor.laser_room_temperature
-      line_color: blue
-      line_width: 8
-      font_size: 75
-    - type: custom:mini-graph-card
-      entities:
-        - sensor.laser_room_dew_point
-      line_color: var(--accent-color)
-      line_width: 8
-      font_size: 75
-- type: horizontal-stack
-  cards:
-    - type: custom:mini-graph-card
-      entities:
-        - sensor.laser_room_humidity
-      line_color: '#e74c3c'
-      line_width: 8
-      font_size: 75
-    - type: custom:mini-graph-card
-      entities:
-        - sensor.laser_room_chiller_temperature
-      line_color: var(--accent-color)
-      line_width: 8
-      font_size: 75
-      color_thresholds:                
-      - value: 0
-        color: "#0000FF"
-      - value: 68
-        color: "#00FF00"
-      - value: 75.5
-        color: "#FF0000"
+- type: custom:mini-graph-card
+  entities:
+  - entity: sensor.laser_room_temperature
+    name: Laser Room Temp
+    color: green              
+    show_points: false
+  - entity: sensor.laser_room_chiller_temperature
+    name: Chiller Temp
+    color: red              
+    show_points: false
+  - entity: sensor.laser_room_dew_point
+    name: Dew Point
+    color: blue              
+    show_points: false
+  - entity: sensor.laser_room_humidity
+    name: Laser Room Humidity
+    color: orange              
+    show_points: false
+  line_color: blue
+  font_size: 100  
+  hours_to_show: 1
+  points_per_hour: 60
+  line_width: 5
 ```
-
 
 ## Wiring
 TODO
 
-## OTA Processing
-TODO
+## OTA Processing (WIP)
+### Arduino IDE
+* Install the latest version of python (2.7.8)
+* Enable mDNS https://superuser.com/questions/1330027/how-to-enable-mdns-on-windows-10-build-17134
+* Install windows 10 Bonjour service (2.2.0)
+* Install Bonjour browser
+
+### VS Code
 
 ## Future Enhancements
-- [ ] Add over the air updates
-- [ ] Complete HA documentation
+- [X] Complete HA documentation
+- [X] Create status component to send general info back to HA
+- [X] Add effects to LED component
+- [X] Upgrade to ArduinoJson 6
+- [X] Add over the air updates
+- [ ] Update to have arduino send effect list to be more dynamic
+- [ ] Add zones to LEDs to allow different zones to be controlled independently
+- [ ] Add ability to control without the need for Home Assistant
 - [ ] Add support for PIR to turn on leds when motion is detected
-- [ ] Add effects to LED component
-- [ ] Create status component to send general info back to HA
