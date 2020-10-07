@@ -1,13 +1,13 @@
-#ifndef FAST_LED_PATTERN_HEADER
-#define FAST_LED_PATTERN_HEADER
+#ifndef FAST_LED_EFFECT_HEADER
+#define FAST_LED_EFFECT_HEADER
 
 // ****************************************************************************
 //
 // ****************************************************************************
-class FastLedPattern
+class FastLedEffect
 {
 private:
-  enum PatternState
+  enum EffectState
   {
     PatterState_Init,
     PatterState_Process,
@@ -19,20 +19,20 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  FastLedPattern(char *aPatternName, CRGB aColor, uint8_t aBrightness) : 
-    mPatternName(aPatternName),
+  FastLedEffect(char *aEffectName, CRGB aColor, uint8_t aBrightness) : 
+    mEffectName(aEffectName),
     mColor(aColor),
     mEnabled(true),
     mBrightness(aBrightness),
     mDelay(1000)
   { 
-    set_state(PatternState::PatterState_Init);
+    set_state(EffectState::PatterState_Init);
   }
 
   // **************************************************************************
   //
   // **************************************************************************
-  void reset() { set_state(PatternState::PatterState_Init); }
+  void reset() { set_state(EffectState::PatterState_Init); }
 
   // **************************************************************************
   //
@@ -41,24 +41,24 @@ public:
   {
     switch (mState)
     {
-      case PatternState::PatterState_Init:
-        if(true == init(aLeds, aNumLeds)) { set_state(PatternState::PatterState_Process); }
+      case EffectState::PatterState_Init:
+        if(true == init(aLeds, aNumLeds)) { set_state(EffectState::PatterState_Process); }
       break;
 
-      case PatternState::PatterState_Process:
-        if(true == process(aLeds, aNumLeds)) { set_state(PatternState::PatterState_End); }
+      case EffectState::PatterState_Process:
+        if(true == process(aLeds, aNumLeds)) { set_state(EffectState::PatterState_End); }
       break;
 
-      case PatternState::PatterState_End:
-        if(true == end(aLeds, aNumLeds)) { set_state(PatternState::PatterState_Complete); }
+      case EffectState::PatterState_End:
+        if(true == end(aLeds, aNumLeds)) { set_state(EffectState::PatterState_Complete); }
       break;    
 
-      case PatternState::PatterState_Complete:
+      case EffectState::PatterState_Complete:
       default:
         EVERY_N_MILLISECONDS(5000) 
         {      
           Serial.println("Running Complete State");
-          // Do nothing here as this pattern ran to completion
+          // Do nothing here as this effect ran to completion
         }
       break;
     }
@@ -69,25 +69,25 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  void set_state(PatternState aValue)
+  void set_state(EffectState aValue)
   {
     mState = aValue;
 
     switch(mState)
     {
-      case PatternState::PatterState_Init:
+      case EffectState::PatterState_Init:
         Serial.println("FL: Entering Init State");
       break;
 
-      case PatternState::PatterState_Process:
+      case EffectState::PatterState_Process:
         Serial.println("FL: Entering Process State");
       break;
 
-      case PatternState::PatterState_End:
+      case EffectState::PatterState_End:
         Serial.println("FL: Entering End State");
       break;    
 
-      case PatternState::PatterState_Complete:
+      case EffectState::PatterState_Complete:
         Serial.println("FL: Entering Complete State");
       break;
 
@@ -116,13 +116,13 @@ public:
 
     if(mEnabled == true)
     {
-      Serial.println("FL: Pattern Enabled - Init State");
-      set_state(PatternState::PatterState_Init);
+      Serial.println("FL: Effect Enabled - Init State");
+      set_state(EffectState::PatterState_Init);
     }
     else
     {
-      Serial.println("FL: Pattern Disabled - End State");
-      set_state(PatternState::PatterState_End);
+      Serial.println("FL: Effect Disabled - End State");
+      set_state(EffectState::PatterState_End);
     }
   }
 
@@ -134,7 +134,7 @@ public:
   uint8_t      get_color_green()  const { return mColor.g; }
   uint8_t      get_color_blue()   const { return mColor.b; }  
   uint8_t      get_brightness()   const { return mBrightness; }  
-  const char * get_pattern_name() const { return mPatternName; }
+  const char * get_effect_name() const { return mEffectName; }
 
 protected:
   virtual bool init(CRGB *aLeds, int aNumLeds) { return true; };
@@ -147,18 +147,18 @@ protected:
   int16_t mDelay;
 
 private:
-  PatternState mState;
-  char        *mPatternName;
+  EffectState mState;
+  char        *mEffectName;
 };
 
 // ****************************************************************************
 //
 // ****************************************************************************
-class FastLedPatternSolid : public FastLedPattern
+class FastLedEffectSolid : public FastLedEffect
 {
 public:
-  FastLedPatternSolid(CRGB aColor, uint8_t aBrightness) : 
-    FastLedPattern("solid", aColor, aBrightness),
+  FastLedEffectSolid(CRGB aColor, uint8_t aBrightness) : 
+    FastLedEffect("solid", aColor, aBrightness),
     mHasInit(false),
     mHasEnd(false),
     mFadeBrightness(0),
@@ -241,11 +241,11 @@ private:
 // ****************************************************************************
 //
 // ****************************************************************************
-class FastLedPatternTwinkle : public FastLedPattern
+class FastLedEffectTwinkle : public FastLedEffect
 {
 public:
-  FastLedPatternTwinkle(CRGB aColor, uint8_t aBrightness) : 
-    FastLedPattern("twinkle", aColor, aBrightness),
+  FastLedEffectTwinkle(CRGB aColor, uint8_t aBrightness) : 
+    FastLedEffect("twinkle", aColor, aBrightness),
     mDelay(100),
     mCount(1)
   { 
@@ -295,11 +295,11 @@ private:
 // ****************************************************************************
 //
 // ****************************************************************************
-class FastLedPatternCylon : public FastLedPattern
+class FastLedEffectCylon : public FastLedEffect
 {
 public:
-  FastLedPatternCylon(CRGB aColor, uint8_t aBrightness) : 
-    FastLedPattern("cylon", aColor, aBrightness),
+  FastLedEffectCylon(CRGB aColor, uint8_t aBrightness) : 
+    FastLedEffect("cylon", aColor, aBrightness),
     mReturnDelay(50),
     mDelay(10),    
     mSize(5),
