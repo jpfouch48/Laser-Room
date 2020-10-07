@@ -82,6 +82,7 @@ light:
       - solid
       - cylon
       - twinkle
+      - indexer
     qos: 0  
 ```
 

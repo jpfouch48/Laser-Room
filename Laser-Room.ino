@@ -441,6 +441,16 @@ void publish_led_data()
   lColor["g"]        = gRgbWrapper.get_color_green();
   lColor["b"]        = gRgbWrapper.get_color_blue();
 
+  JsonArray lEffects = lJsonBuffer.createNestedArray("effect-list");
+
+  Iterator<FastLedEffect *> lIter = gRgbWrapper.get_effects();
+  while(lIter != NULL)
+  {
+    lEffects.add((*lIter)->get_effect_name());
+    lIter++;
+  }
+
+
   serializeJson(lJsonBuffer, lSzBuffer);
   
   Serial.print("Led Message: ");
