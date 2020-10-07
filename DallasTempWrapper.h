@@ -31,7 +31,8 @@ public:
     // ************************************************************************
     //
     // ************************************************************************
-    float get_temp() { return mDallasTemp.getTempF(0); }
+    float get_temp()    { return mDallasTemp.getTempFByIndex(0); }
+    char *get_sz_temp() { return mSzTemp; }
 
     // ************************************************************************
     //
@@ -39,6 +40,7 @@ public:
     bool loop()
     {
         mDallasTemp.requestTemperatures();
+        dtostrf(get_temp(), 7, 3, mSzTemp);
         return true;
     }
 
@@ -49,6 +51,7 @@ private:
     unsigned long mTimeStamp;
     OneWire mOneWire; 
     DallasTemperature mDallasTemp;
+    char mSzTemp[10];
 };
 
 #endif
