@@ -400,4 +400,64 @@ private:
   int mIndex;
 };
 
+
+// ****************************************************************************
+//
+// ****************************************************************************
+class FastLedEffectIndexer : public FastLedEffect
+{
+public:
+  FastLedEffectIndexer(CRGB aColor, uint8_t aBrightness) : 
+    FastLedEffect("indexer", aColor, aBrightness),
+    mDelay(2000),    
+    mIndex(0)
+  { 
+  }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  virtual bool init(CRGB *aLeds, int aNumLeds)
+  { 
+    mIndex = 0;
+    fill_solid(aLeds, aNumLeds, CRGB(0,0,0));
+    FastLED.setBrightness(mBrightness);
+    return true; 
+  }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  virtual bool process(CRGB *aLeds, int aNumLeds) 
+  {
+    EVERY_N_MILLISECONDS(mDelay)     
+    {
+      if(mIndex >= aNumLeds)
+        mIndex = 0;
+        
+      fill_solid(aLeds, aNumLeds, CRGB(0,0,0));
+      aLeds[mIndex] = mColor;
+
+      Serial.print("Indexer: ");
+      Serial.println(mIndex);
+
+      mIndex++;
+    }
+
+    return false; 
+  }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  virtual bool end(CRGB *aLeds, int aNumLeds)  
+  { 
+    fill_solid(aLeds, aNumLeds, CRGB(0,0,0));
+    return true; 
+  }
+
+private:
+  int mDelay;
+  int mIndex;
+};
 #endif

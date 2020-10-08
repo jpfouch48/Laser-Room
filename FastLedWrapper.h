@@ -27,12 +27,14 @@ public:
     mEffectSolid(CRGB(50,50,50), 50),
     mEffectTwinkle(CRGB(50,50,50), 50),
     mEffectCylon(CRGB(50,50,50), 50),
-    mCurrentEffect(&mEffectCylon),
+    mEffectIndexer(CRGB(50,50,50), 50),
+    mCurrentEffect(&mEffectCylon),    
     mEffectList()
   {
     mEffectList.push_back(&mEffectSolid);
     mEffectList.push_back(&mEffectTwinkle);
     mEffectList.push_back(&mEffectCylon);
+    mEffectList.push_back(&mEffectIndexer);
   }
 
   // **************************************************************************
@@ -72,12 +74,13 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  uint8_t get_color_red()         const { return mCurrentEffect->get_color_red(); }
-  uint8_t get_color_green()       const { return mCurrentEffect->get_color_green(); }
-  uint8_t get_color_blue()        const { return mCurrentEffect->get_color_blue(); }  
-  uint8_t get_brightness()        const { return mCurrentEffect->get_brightness(); }  
-  bool    get_enabled()           const { return mCurrentEffect->get_enabled(); }
-  const char * get_effect_name() const { return mCurrentEffect->get_effect_name(); }
+  uint8_t get_color_red()         const  { return mCurrentEffect->get_color_red();   }
+  uint8_t get_color_green()       const  { return mCurrentEffect->get_color_green(); }
+  uint8_t get_color_blue()        const  { return mCurrentEffect->get_color_blue();  }  
+  uint8_t get_brightness()        const  { return mCurrentEffect->get_brightness();  }  
+  bool    get_enabled()           const  { return mCurrentEffect->get_enabled();     }
+  const char * get_effect_name()  const  { return mCurrentEffect->get_effect_name(); }
+  Iterator<FastLedEffect*> get_effects() { return mEffectList.begin();               }
 
   // **************************************************************************
   //
@@ -104,11 +107,12 @@ public:
 protected:
 
 private:
-  CRGB                        mLeds[RGB_NUM_LEDS];
+  CRGB                       mLeds[RGB_NUM_LEDS];
   FastLedEffect             *mCurrentEffect;
   FastLedEffectSolid         mEffectSolid;
   FastLedEffectTwinkle       mEffectTwinkle;
   FastLedEffectCylon         mEffectCylon;
+  FastLedEffectIndexer       mEffectIndexer;
   LinkedList<FastLedEffect*> mEffectList;
 };
 

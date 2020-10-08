@@ -353,15 +353,16 @@ bool parse_json(char *aMsgBuffer)
 
   if (lJsonBuffer.containsKey("color")) 
   {
-    gRgbWrapper.set_color_red(atoi(lJsonBuffer["color"]["r"]));
-    gRgbWrapper.set_color_green(atoi(lJsonBuffer["color"]["g"]));
-    gRgbWrapper.set_color_blue(atoi(lJsonBuffer["color"]["b"]));
+    gRgbWrapper.set_color_red(lJsonBuffer["color"]["r"]);
+    gRgbWrapper.set_color_green(lJsonBuffer["color"]["g"]);
+    gRgbWrapper.set_color_blue(lJsonBuffer["color"]["b"]);
     lPublishLedData = true;
   }  
  
   if (lJsonBuffer.containsKey("brightness")) 
   {
-    gRgbWrapper.set_brightness(atoi(lJsonBuffer["brightness"]));
+    
+    gRgbWrapper.set_brightness(lJsonBuffer["brightness"]);
     lPublishLedData = true;
   }  
 
@@ -440,6 +441,16 @@ void publish_led_data()
   lColor["r"]        = gRgbWrapper.get_color_red();
   lColor["g"]        = gRgbWrapper.get_color_green();
   lColor["b"]        = gRgbWrapper.get_color_blue();
+
+  JsonArray lEffects = lJsonBuffer.createNestedArray("effect-list");
+
+  Iterator<FastLedEffect *> lIter = gRgbWrapper.get_effects();
+  while(lIter != NULL)
+  {
+    lEffects.add((*lIter)->get_effect_name());
+    lIter++;
+  }
+
 
   serializeJson(lJsonBuffer, lSzBuffer);
   
