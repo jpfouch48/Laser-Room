@@ -5,7 +5,7 @@
 //#define DISABLE_OTA
 //#define DISABLE_MQTT
 
-#define APP_VERSION                 "0.0.9"
+const char* APP_VERSION = "0.0.10";
 
 // ****************************************************************************
 // WIFI Defines
@@ -22,36 +22,34 @@
 #define MQTT_SERVER_PORT            1883
 #define MQTT_USER                   "[Redacted]"
 #define MQTT_USER_PW                "[Redacted]"
-#define MQTT_CLIENT_ID              "mqtt_laser_room"
 
 // ****************************************************************************
 // MQTT Message Defines
 // ****************************************************************************
+const char* MQTT_CLIENT_ID                   = "mqtt_laser_room";
 
 // Room Temp Sensor - DHT - (temp, humidity and dewpoint)
-#define MQTT_ROOM_TEMP_SENSOR_TOPIC     "laser_room/laser_room_sensor"
+const char* MQTT_ROOM_TEMP_SENSOR_TOPIC      = "laser_room/laser_room_sensor";
 
 // Chiller Temp Sensor - DS18B20 - (temp)
-#define MQTT_CHILLER_TEMP_SENSOR_TOPIC  "laser_room/laser_room_chiller_sensor"
+const char* MQTT_CHILLER_TEMP_SENSOR_TOPIC   = "laser_room/laser_room_chiller_sensor";
 
 // Laser LED Sensor - RGB - WS2812B
-#define MQTT_LED_SENSOR_STATE_TOPIC     "laser_room/laser_room_led"
-#define MQTT_LED_SENSOR_SET_TOPIC       "laser_room/laser_room_led/set"
+const char* MQTT_LED_SENSOR_ZONE_STATE_TOPIC   = "laser_room/laser_room_led/\%s";
+const char* MQTT_LED_SENSOR_ZONE_SET_TOPIC     = "laser_room/laser_room_led/\%s/set";
 
-#define MQTT_LED_CMD_ON                 "ON"
-#define MQTT_LED_CMD_OFF                "OFF"
+const char* MQTT_LED_CMD_ON                  = "ON";
+const char* MQTT_LED_CMD_OFF                 = "OFF";
 
 // Led Room Status 
-#define MQTT_ROOM_STATUS_SENSOR_TOPIC   "laser_room/laser_room_status_sensor"
-
-
+const char* MQTT_ROOM_STATUS_SENSOR_TOPIC  = "laser_room/laser_room_status_sensor";
 
 // ****************************************************************************
 // OTA Defines
 // ****************************************************************************
-#define OTA_HOSTNAME                MQTT_CLIENT_ID
-#define OTA_PW                      ""
-#define OTA_PORT                    8266
+#define OTA_HOSTNAME   MQTT_CLIENT_ID
+#define OTA_PW         ""
+const int OTA_PORT   = 8266;
 
 // ****************************************************************************
 // PIN Definitions
@@ -59,17 +57,16 @@
 //   - RGB_PIN     - RGB LED Control pin
 //   - DS18B20_PIN - Chiller Temp Sensor pin
 // ****************************************************************************
-#define DHT_PIN                     5
-#define RGB_PIN                     14
-#define DS18B20_PIN                 0
+const int DHT_PIN     = 5;
+const int RGB_PIN     = 14;
+const int DS18B20_PIN = 0;
  
 // ****************************************************************************
 // RGB Definitions
 // ****************************************************************************
-#define RGB_LED_TYPE                WS2812B
-#define RGB_COLOR_ORDER             GRB
-#define RGB_NUM_LEDS                20
-
+#define RGB_LED_TYPE       WS2812B
+#define RGB_COLOR_ORDER    GRB
+const int RGB_NUM_LEDS   = 30;
 
 // Include a configuration private file to house
 // your private configs you don't want to store in git

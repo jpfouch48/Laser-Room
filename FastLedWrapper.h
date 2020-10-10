@@ -10,8 +10,9 @@
   #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-#include "FastLedEffect.h"
 #include "LinkedList.h"
+#include "FastLedEffect.h"
+#include "FastLedZone.h"
 
 // ****************************************************************************
 //
@@ -28,8 +29,8 @@ public:
     mEffectTwinkle(CRGB(50,50,50), 50),
     mEffectCylon(CRGB(50,50,50), 50),
     mEffectIndexer(CRGB(50,50,50), 50),
-    mCurrentEffect(&mEffectCylon),    
-    mEffectList()
+    mEffectList(),
+    mZoneList()
   {
     mEffectList.push_back(&mEffectSolid);
     mEffectList.push_back(&mEffectTwinkle);
@@ -38,34 +39,244 @@ public:
   }
 
   // **************************************************************************
+  // 
+  // **************************************************************************
+  FastLedZone* get_zone(char* aZone)
+  {
+    FastLedZone *lZone = NULL;
+
+    if(NULL != aZone)
+    {
+      Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+      while(lIter != NULL)
+      {
+        if(0 == strcmp(aZone, (*lIter)->get_zone_name()))
+        {
+          lZone = *lIter;
+          break;
+        }
+
+        lIter++;
+      }
+    }
+
+    return lZone;
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_color_red(uint8_t aValue) 
+  {
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+    while(lIter != NULL)
+    {
+      set_color_red(aValue, (*lIter)->get_zone_name());
+      lIter++;
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_color_red(uint8_t aValue, char* aZone) 
+  {
+    FastLedZone* lZone = get_zone(aZone);
+
+    if(lZone == NULL)
+    {
+      Serial.print(F("FLW::set_color_red - invalid zone: "));
+      Serial.println(aZone);
+    }
+    else
+    {
+      if(NULL != lZone->get_effect())
+        lZone->get_effect()->set_color_red(aValue); 
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_color_green(uint8_t aValue) 
+  {
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+    while(lIter != NULL)
+    {
+      set_color_green(aValue, (*lIter)->get_zone_name());
+      lIter++;
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_color_green(uint8_t aValue, char* aZone)
+  {
+    FastLedZone* lZone = get_zone(aZone);
+
+    if(lZone == NULL)
+    {
+      Serial.print(F("FLW::set_color_green - invalid zone: "));
+      Serial.println(aZone);
+    }
+    else
+    {
+      if(NULL != lZone->get_effect())
+        lZone->get_effect()->set_color_green(aValue); 
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_color_blue(uint8_t aValue) 
+  {
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+    while(lIter != NULL)
+    {
+      set_color_blue(aValue, (*lIter)->get_zone_name());
+      lIter++;
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_color_blue(uint8_t aValue, char* aZone)
+  {
+    FastLedZone* lZone = get_zone(aZone);
+
+    if(lZone == NULL)
+    {
+      Serial.print(F("FLW::set_color_blue - invalid zone: "));
+      Serial.println(aZone);
+    }
+    else
+    {
+      if(NULL != lZone->get_effect())
+        lZone->get_effect()->set_color_blue(aValue); 
+    }
+  }  
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_brightness(uint8_t aValue) 
+  {
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+    while(lIter != NULL)
+    {
+      set_brightness(aValue, (*lIter)->get_zone_name());
+      lIter++;
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_brightness(uint8_t aValue, char* aZone)
+  { 
+    FastLedZone* lZone = get_zone(aZone);
+
+    if(lZone == NULL)
+    {
+      Serial.print(F("FLW::set_brightness - invalid zone: "));
+      Serial.println(aZone);
+    }
+    else
+    {
+      if(NULL != lZone->get_effect())
+        lZone->get_effect()->set_brightness(aValue); 
+    }
+  } 
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_enabled(bool aValue) 
+  {
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+    while(lIter != NULL)
+    {
+      set_enabled(aValue, (*lIter)->get_zone_name());
+      lIter++;
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_enabled(bool aValue, char* aZone)    
+  { 
+    FastLedZone* lZone = get_zone(aZone);
+
+    if(lZone == NULL)
+    {
+      Serial.print(F("FLW::set_brightness - invalid zone: "));
+      Serial.println(aZone);
+    }
+    else
+    {
+      if(NULL != lZone->get_effect())
+        lZone->get_effect()->set_enabled(aValue); 
+    }
+  }
+
+  // **************************************************************************
+  // 
+  // **************************************************************************
+  void set_effect(const char *aEffectName) 
+  {
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+
+    while(lIter != NULL)
+    {
+      set_effect(aEffectName, (*lIter)->get_zone_name());
+      lIter++;
+    }
+  }
+
+  // **************************************************************************
   //
   // **************************************************************************
-  void set_color_red(uint8_t aValue)   { mCurrentEffect->set_color_red(aValue); }
-  void set_color_green(uint8_t aValue) { mCurrentEffect->set_color_green(aValue); }
-  void set_color_blue(uint8_t aValue)  { mCurrentEffect->set_color_blue(aValue); }  
-  void set_brightness(uint8_t aValue)  { mCurrentEffect->set_brightness(aValue); }  
-  void set_enabled(bool aValue)        { mCurrentEffect->set_enabled(aValue); }
-
-  bool set_effect(const char *aEffectName)
+  bool set_effect(const char *aEffectName, char* aZone)
   {
+    FastLedZone* lZone = get_zone(aZone);
+
     Iterator<FastLedEffect*> lIter = mEffectList.begin();
 
     while(lIter != NULL)
     {
       if(0 == strcmp(aEffectName, (*lIter)->get_effect_name()))
       {
-        Serial.print("Found Effect: ");
+        Serial.print(F("Found Effect: "));
         Serial.println(aEffectName);
 
-        mCurrentEffect = *lIter; 
-        mCurrentEffect->reset();
+        if(lZone == NULL)
+        {
+          Serial.print(F("FLW::set_effect - invalid zone: "));
+          Serial.println(aZone);
+        }
+        else
+        {
+          lZone->set_effect(*lIter);
+          lZone->get_effect()->reset();
+        }
+
         return true;
       }
 
       lIter++;
     }
 
-    Serial.print("Unknown Effect: ");
+    Serial.print(F("Unknown Effect: "));
     Serial.println(aEffectName);
 
     return false;
@@ -74,13 +285,103 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  uint8_t get_color_red()         const  { return mCurrentEffect->get_color_red();   }
-  uint8_t get_color_green()       const  { return mCurrentEffect->get_color_green(); }
-  uint8_t get_color_blue()        const  { return mCurrentEffect->get_color_blue();  }  
-  uint8_t get_brightness()        const  { return mCurrentEffect->get_brightness();  }  
-  bool    get_enabled()           const  { return mCurrentEffect->get_enabled();     }
-  const char * get_effect_name()  const  { return mCurrentEffect->get_effect_name(); }
-  Iterator<FastLedEffect*> get_effects() { return mEffectList.begin();               }
+  uint8_t get_color_red(char* aZone)  
+  {
+    FastLedZone* lZone = get_zone(aZone);
+
+    // TODO: NEED AN ERROR 
+    if(lZone == NULL || lZone->get_effect() == NULL)
+      return 0;   
+
+    return lZone->get_effect()->get_color_red();
+  }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  uint8_t get_color_green(char* aZone)  
+  { 
+    FastLedZone* lZone = get_zone(aZone);
+
+    // TODO: NEED AN ERROR 
+    if(lZone == NULL || lZone->get_effect() == NULL)
+      return 0;   
+
+    return lZone->get_effect()->get_color_green();
+  }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  uint8_t get_color_blue(char* aZone)  
+  { 
+    FastLedZone* lZone = get_zone(aZone);
+
+    // TODO: NEED AN ERROR 
+    if(lZone == NULL || lZone->get_effect() == NULL)
+      return 0;   
+
+    return lZone->get_effect()->get_color_blue();
+  }  
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  uint8_t get_brightness(char* aZone)  
+  {
+    FastLedZone* lZone = get_zone(aZone);
+
+    // TODO: NEED AN ERROR 
+    if(lZone == NULL || lZone->get_effect() == NULL)
+      return 0;   
+
+    return lZone->get_effect()->get_brightness();
+  }  
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  bool get_enabled(char* aZone)  
+  { 
+    FastLedZone* lZone = get_zone(aZone);
+
+    // TODO: NEED AN ERROR 
+    if(lZone == NULL || lZone->get_effect() == NULL)
+      return 0;   
+
+    return lZone->get_effect()->get_enabled();
+  }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  const char* get_effect_name(char* aZone)  
+  { 
+    FastLedZone* lZone = get_zone(aZone);
+
+    // TODO: NEED AN ERROR 
+    if(lZone == NULL || lZone->get_effect() == NULL)
+      return 0;   
+
+    return lZone->get_effect()->get_effect_name();
+  }
+
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  Iterator<FastLedEffect*> get_effects() { return mEffectList.begin(); }
+  Iterator<FastLedZone*>   get_zones()   { return mZoneList.begin();   }
+
+  // **************************************************************************
+  //
+  // **************************************************************************
+  bool add_zone(FastLedZone *aZone)
+  {
+    // TODO: CHECK INDEX VALUES TO MAKE SURE THEY ARE WITHIN THE BOUNDS
+    mZoneList.push_back(aZone);
+    return true;
+  }
 
   // **************************************************************************
   //
@@ -91,9 +392,13 @@ public:
     FastLED.addLeds<RGB_LED_TYPE, RGB_PIN, RGB_COLOR_ORDER>(mLeds, RGB_NUM_LEDS).setCorrection(TypicalLEDStrip);
     FastLED.setMaxPowerInVoltsAndMilliamps(12, 10000); //experimental for power management. Feel free to try in your own setup.
 
-    mCurrentEffect->set_enabled(true);
-
-    loop();
+//    Iterator<FastLedZone*> lIter = mZoneList.begin();
+//    while(lIter != NULL)
+//    {
+//      (*lIter)->get_effect()->set_enabled(true);
+//      lIter++;
+//    }
+//    loop();
   }
 
   // **************************************************************************
@@ -101,19 +406,29 @@ public:
   // **************************************************************************
   void loop()
   {
-    mCurrentEffect->loop(mLeds, RGB_NUM_LEDS);
+    Iterator<FastLedZone*> lIter = mZoneList.begin();
+    while(lIter != NULL)
+    {
+      if((*lIter)->get_effect() == NULL)
+        return;   
+
+      (*lIter)->get_effect()->loop(mLeds, RGB_NUM_LEDS);
+      lIter++;
+    }
   }
 
 protected:
 
 private:
   CRGB                       mLeds[RGB_NUM_LEDS];
-  FastLedEffect             *mCurrentEffect;
+
   FastLedEffectSolid         mEffectSolid;
   FastLedEffectTwinkle       mEffectTwinkle;
   FastLedEffectCylon         mEffectCylon;
   FastLedEffectIndexer       mEffectIndexer;
+
   LinkedList<FastLedEffect*> mEffectList;
+  LinkedList<FastLedZone*>   mZoneList;
 };
 
 #endif

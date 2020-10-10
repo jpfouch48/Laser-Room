@@ -29,9 +29,12 @@ char gMqttBuffer[MQTT_BUFFER_WIDTH];
 // RGB Defines
 FastLedWrapper gRgbWrapper;
 
+FastLedZone gZone1("zone1",  0,  9);
+FastLedZone gZone2("zone2", 10, 19);
+FastLedZone gZone3("zone3", 20, 29);
+
 // Status variables
 char gIpAddress[20];
-
 
 // Used to throttle state transitions for testing purposes
 // when wifi and mqtt are disabled
@@ -64,14 +67,14 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(0);
     gRgbWrapper.set_effect("cylon");
-    Serial.println("Changing to WifiConnecting state");
+    Serial.println(F("Changing to WifiConnecting state"));
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
   {
     gRgbWrapper.set_color_red(0);
     gRgbWrapper.set_color_green(255);
     gRgbWrapper.set_color_blue(0);
-    Serial.println("Changing to MqttConnecting state");
+    Serial.println(F("Changing to MqttConnecting state"));
   }
   else if(gAppState == AppState::AppState_Running)
   {
@@ -79,7 +82,7 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_green(255);
     gRgbWrapper.set_color_blue(255);
     gRgbWrapper.set_effect("solid");
-    Serial.println("Changing to Running state");    
+    Serial.println(F("Changing to Running state"));    
   }
   else if (gAppState == AppState::AppState_Updating)
   {
@@ -87,11 +90,11 @@ void change_state(AppState aState)
     gRgbWrapper.set_color_green(0);
     gRgbWrapper.set_color_blue(255);
     gRgbWrapper.set_effect("cylon");
-    Serial.println("Changing to Updating state");    
+    Serial.println(F("Changing to Updating state"));    
   }
   else if(gAppState == AppState::AppState_Init)
   {
-    Serial.println("Changing to Updating init");    
+    Serial.println(F("Changing to Updating init"));    
   }
 }
 
@@ -99,8 +102,13 @@ void change_state(AppState aState)
 //
 // ****************************************************************************
 void setup()
-{  
+{ 
   Serial.begin(9600);
+
+  // Setup Zones
+  gRgbWrapper.add_zone(&gZone1);
+  gRgbWrapper.add_zone(&gZone2);
+  gRgbWrapper.add_zone(&gZone3);
 
   // Setup Temp Sensors
   gDHTRoomTemp.setup();
@@ -116,7 +124,7 @@ void setup()
   delay(10);
   WiFi.begin(WIFI_SSID, WIFI_SSID_PW);
 
-  Serial.print("Connecting to ");
+  Serial.print(F("Connecting to "));
   Serial.println(WIFI_SSID);
 
 #ifndef DISABLE_OTA
@@ -124,13 +132,13 @@ void setup()
   ArduinoOTA.setPassword(OTA_PW);  
   ArduinoOTA.onStart([]() 
   { 
-    Serial.println("OTA Start"); 
+    Serial.println(F("OTA Start")); 
     change_state(AppState::AppState_Updating);    
   });
 
   ArduinoOTA.onEnd([]()   
   { 
-    Serial.println("OTA Complete"); 
+    Serial.println(F("OTA Complete")); 
     change_state(AppState::AppState_Running);    
   });
   
@@ -145,11 +153,11 @@ void setup()
   ArduinoOTA.onError([](ota_error_t error) 
   {
     Serial.printf("OTA Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR)         Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR)   Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR)     Serial.println("End Failed");
+    if (error == OTA_AUTH_ERROR)         Serial.println(F("Auth Failed"));
+    else if (error == OTA_BEGIN_ERROR)   Serial.println(F("Begin Failed"));
+    else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
+    else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
+    else if (error == OTA_END_ERROR)     Serial.println(F("End Failed"));
   });
 #endif
 
@@ -176,9 +184,9 @@ void loop()
           WiFi.localIP()[2], 
           WiFi.localIP()[3]);
 
-        Serial.print("WIFI Connected to ");
+        Serial.print(F("WIFI Connected to "));
         Serial.println(WIFI_SSID);
-        Serial.print("IP address: ");
+        Serial.print(F("IP address: "));
         Serial.println(WiFi.localIP());
 
 #ifndef DISABLE-MQTT
@@ -188,13 +196,13 @@ void loop()
 
 #ifndef DISABLE_OTA
         ArduinoOTA.begin();
-        Serial.println("OTA ready");  
+        Serial.println(F("OTA ready"));  
 #endif
         change_state(AppState::AppState_MqttConnecting);
       }
       else
       {
-        Serial.print("Connecting to ");
+        Serial.print(F("Connecting to "));
         Serial.println(WIFI_SSID);
       }
     }
@@ -213,21 +221,34 @@ void loop()
 #ifndef DISABLE_MQTT      
       if (!gMqttClient.connected()) 
       {
-        Serial.println("Connecting to MQTT");
+        Serial.println(F("Connecting to MQTT"));
 
         if (gMqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_USER_PW)) 
         {          
-          Serial.println("Connected to MQTT");
+          Serial.println(F("Connected to MQTT"));
           change_state(AppState::AppState_Running);
-          gMqttClient.subscribe(MQTT_LED_SENSOR_SET_TOPIC);
-          publish_led_data();
+
+          Iterator<FastLedZone*> lIter = gRgbWrapper.get_zones();
+          while(lIter != NULL)
+          {
+            char lStateSetTopic[50];
+            sprintf(lStateSetTopic, MQTT_LED_SENSOR_ZONE_SET_TOPIC, (*lIter)->get_zone_name());          
+            gMqttClient.subscribe(lStateSetTopic);
+
+            Serial.print("Subscribing to: ");
+            Serial.println(lStateSetTopic);
+            
+            publish_led_data((*lIter)->get_zone_name());
+            lIter++;
+          }
+
           publish_status_data();
         }
         else 
         {
-          Serial.print("failed, rc=");
+          Serial.print(F("failed, rc="));
           Serial.print(gMqttClient.state());
-          Serial.println(" try again in 10 seconds");
+          Serial.println(F(" try again in 10 seconds"));
           yield();  
         }
       }
@@ -294,24 +315,39 @@ void loop()
 // ****************************************************************************
 void mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength) 
 {
-  Serial.print("mqtt_callback - ");
-  Serial.print("Topic: ");
+  Serial.print(F("mqtt_callback - "));
+  Serial.print(F("Topic: "));
   Serial.println(aTopic);
+
+  // Parse zone info from topic
+  char lZone[15];  
+  if(0 == sscanf(aTopic, MQTT_LED_SENSOR_ZONE_SET_TOPIC, lZone))
+  {
+    Serial.println(F("Invalid Zone in topic"));
+    return;
+  }
+
+  char *lSep = strchr(lZone, '/');
+  if(NULL != lSep) lSep[0] = '\0';
+
+  Serial.print(F("mqtt_callback - "));
+  Serial.print(F("Zone: "));
+  Serial.println(lZone);
 
   if(aLength > MQTT_BUFFER_WIDTH)
   {
     // TODO: LOG AN ERROR - MESSAGE IS TO LARGE FOR BUFFER
-    Serial.println("Payload to large");
+    Serial.println(F("mqtt_callback - Payload to large"));
   }
   else
   {
     memcpy(gMqttBuffer, aPayload, aLength);
     gMqttBuffer[aLength] = '\0';
 
-    Serial.print("  Payload: ");
+    Serial.print(F("  Payload: "));
     Serial.println(gMqttBuffer);
 
-    parse_json(gMqttBuffer);
+    parse_json(gMqttBuffer, lZone);
   }
 }
 
@@ -325,7 +361,7 @@ void mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength)
 //        "effect:"      "effect_name"
 //     }
 // ****************************************************************************
-bool parse_json(char *aMsgBuffer)
+bool parse_json(char *aMsgBuffer, char *aZone)
 {
   StaticJsonDocument<200> lJsonBuffer;
   bool lPublishLedData = false;
@@ -333,7 +369,7 @@ bool parse_json(char *aMsgBuffer)
 
   if(error)
   {
-    Serial.print("parse_json: deserializeJson failed -  ");
+    Serial.print(F("parse_json: deserializeJson failed -  "));
     Serial.println(error.c_str());
     return false;
   }
@@ -342,38 +378,40 @@ bool parse_json(char *aMsgBuffer)
   {
     if (strcmp(lJsonBuffer["state"], MQTT_LED_CMD_ON) == 0) 
     {
-      gRgbWrapper.set_enabled(true);      
+      gRgbWrapper.set_enabled(true, aZone);      
     }
     else if (strcmp(lJsonBuffer["state"], MQTT_LED_CMD_OFF) == 0) 
     {
-      gRgbWrapper.set_enabled(false);
+      gRgbWrapper.set_enabled(false, aZone);
     }
     lPublishLedData = true;
   }  
 
   if (lJsonBuffer.containsKey("color")) 
   {
-    gRgbWrapper.set_color_red(lJsonBuffer["color"]["r"]);
-    gRgbWrapper.set_color_green(lJsonBuffer["color"]["g"]);
-    gRgbWrapper.set_color_blue(lJsonBuffer["color"]["b"]);
+    gRgbWrapper.set_color_red(lJsonBuffer["color"]["r"], aZone);
+    gRgbWrapper.set_color_green(lJsonBuffer["color"]["g"], aZone);
+    gRgbWrapper.set_color_blue(lJsonBuffer["color"]["b"], aZone);
     lPublishLedData = true;
   }  
  
   if (lJsonBuffer.containsKey("brightness")) 
   {
     
-    gRgbWrapper.set_brightness(lJsonBuffer["brightness"]);
+    gRgbWrapper.set_brightness(lJsonBuffer["brightness"], aZone);
     lPublishLedData = true;
   }  
 
   if (lJsonBuffer.containsKey("effect"))
   {
-    gRgbWrapper.set_effect(lJsonBuffer["effect"]);
+    gRgbWrapper.set_effect(lJsonBuffer["effect"], aZone);
     lPublishLedData = true;
   }
 
   if(lPublishLedData)
-    publish_led_data();
+  {
+    publish_led_data(aZone);
+  }
 
   return true;
 }
@@ -394,7 +432,7 @@ void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint)
   lJsonBuffer["dewpoint"]    = aDewPoint;
   serializeJson(lJsonBuffer, lSzBuffer);
  
-  Serial.print("Room Temp Message: ");
+  Serial.print(F("Room Temp Message: "));
   Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  
@@ -416,7 +454,7 @@ void publish_chiller_temp_data(char *aTemp)
   lJsonBuffer["temperature"] = aTemp;
   serializeJson(lJsonBuffer, lSzBuffer);
   
-  Serial.print("Chiller Temp Message: ");
+  Serial.print(F("Chiller Temp Message: "));
   Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  
@@ -429,36 +467,39 @@ void publish_chiller_temp_data(char *aTemp)
 // ****************************************************************************
 //
 // ****************************************************************************
-void publish_led_data()
+void publish_led_data(char *aZone)
 {
   StaticJsonDocument<200> lJsonBuffer;
   static char lSzBuffer[200];
-  lJsonBuffer["state"]      = (gRgbWrapper.get_enabled()) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
-  lJsonBuffer["brightness"] = gRgbWrapper.get_brightness();
-  lJsonBuffer['effect']     = gRgbWrapper.get_effect_name();
+  lJsonBuffer["state"]      = (gRgbWrapper.get_enabled(aZone)) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
+  lJsonBuffer["brightness"] = gRgbWrapper.get_brightness(aZone);
+  lJsonBuffer['effect']     = gRgbWrapper.get_effect_name(aZone);
 
   JsonObject lColor  = lJsonBuffer.createNestedObject("color");
-  lColor["r"]        = gRgbWrapper.get_color_red();
-  lColor["g"]        = gRgbWrapper.get_color_green();
-  lColor["b"]        = gRgbWrapper.get_color_blue();
+  lColor["r"]        = gRgbWrapper.get_color_red(aZone);
+  lColor["g"]        = gRgbWrapper.get_color_green(aZone);
+  lColor["b"]        = gRgbWrapper.get_color_blue(aZone);
 
-  JsonArray lEffects = lJsonBuffer.createNestedArray("effect-list");
-
-  Iterator<FastLedEffect *> lIter = gRgbWrapper.get_effects();
-  while(lIter != NULL)
-  {
-    lEffects.add((*lIter)->get_effect_name());
-    lIter++;
-  }
-
+//  JsonArray lEffects = lJsonBuffer.createNestedArray("effect-list");
+//  Iterator<FastLedEffect *> lIter = gRgbWrapper.get_effects();
+//  while(lIter != NULL)
+//  {
+//    lEffects.add((*lIter)->get_effect_name());
+//    lIter++;
+//  }
 
   serializeJson(lJsonBuffer, lSzBuffer);
-  
-  Serial.print("Led Message: ");
+    
+  Serial.print(F("Led Message: "));
   Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  
-  gMqttClient.publish(MQTT_LED_SENSOR_STATE_TOPIC, lSzBuffer, true);
+  char lStateTopic[50];
+  sprintf(lStateTopic, MQTT_LED_SENSOR_ZONE_STATE_TOPIC, aZone);
+
+  Serial.print(F("Publising Led to State Topic: "));
+  Serial.println(lStateTopic);
+  gMqttClient.publish(lStateTopic, lSzBuffer, true);
 #endif
 
   yield();  
@@ -478,7 +519,7 @@ void publish_status_data()
   lJsonBuffer["ip"]      = gIpAddress;
   serializeJson(lJsonBuffer, lSzBuffer);
  
-  Serial.print("Status Message: ");
+  Serial.print(F("Status Message: "));
   Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  

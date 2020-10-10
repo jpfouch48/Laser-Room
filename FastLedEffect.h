@@ -57,7 +57,7 @@ public:
       default:
         EVERY_N_MILLISECONDS(5000) 
         {      
-          Serial.println("Running Complete State");
+          Serial.println(F("Running Complete State"));
           // Do nothing here as this effect ran to completion
         }
       break;
@@ -76,24 +76,24 @@ public:
     switch(mState)
     {
       case EffectState::PatterState_Init:
-        Serial.println("FL: Entering Init State");
+        Serial.println(F("FL: Entering Init State"));
       break;
 
       case EffectState::PatterState_Process:
-        Serial.println("FL: Entering Process State");
+        Serial.println(F("FL: Entering Process State"));
       break;
 
       case EffectState::PatterState_End:
-        Serial.println("FL: Entering End State");
+        Serial.println(F("FL: Entering End State"));
       break;    
 
       case EffectState::PatterState_Complete:
-        Serial.println("FL: Entering Complete State");
+        Serial.println(F("FL: Entering Complete State"));
       break;
 
       default:
         
-        Serial.println("FL: Unknown State");
+        Serial.println(F("FL: Unknown State"));
       break;
     }
   }
@@ -116,12 +116,12 @@ public:
 
     if(mEnabled == true)
     {
-      Serial.println("FL: Effect Enabled - Init State");
+      Serial.println(F("FL: Effect Enabled - Init State"));
       set_state(EffectState::PatterState_Init);
     }
     else
     {
-      Serial.println("FL: Effect Disabled - End State");
+      Serial.println(F("FL: Effect Disabled - End State"));
       set_state(EffectState::PatterState_End);
     }
   }
@@ -129,12 +129,12 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  bool         get_enabled()      const { return mEnabled; }
-  uint8_t      get_color_red()    const { return mColor.r; }
-  uint8_t      get_color_green()  const { return mColor.g; }
-  uint8_t      get_color_blue()   const { return mColor.b; }  
-  uint8_t      get_brightness()   const { return mBrightness; }  
-  const char * get_effect_name() const { return mEffectName; }
+  bool         get_enabled()     { return mEnabled; }
+  uint8_t      get_color_red()   { return mColor.r; }
+  uint8_t      get_color_green() { return mColor.g; }
+  uint8_t      get_color_blue()  { return mColor.b; }  
+  uint8_t      get_brightness()  { return mBrightness; }  
+  const char * get_effect_name() { return mEffectName; }
 
 protected:
   virtual bool init(CRGB *aLeds, int aNumLeds) { return true; };
@@ -438,7 +438,7 @@ public:
       fill_solid(aLeds, aNumLeds, CRGB(0,0,0));
       aLeds[mIndex] = mColor;
 
-      Serial.print("Indexer: ");
+      Serial.print(F("Indexer: "));
       Serial.println(mIndex);
 
       mIndex++;
