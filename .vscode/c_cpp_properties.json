@@ -16,7 +16,8 @@
                 ".\\src\\**"
             ],
             "forcedInclude": [],
-            "intelliSenseMode": "msvc-x64"
+            "intelliSenseMode": "msvc-x64",
+            "defines": [ "ARDUINO=100" ]
         }
     ],
     "version": 4

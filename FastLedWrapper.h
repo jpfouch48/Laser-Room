@@ -13,7 +13,12 @@
 // ****************************************************************************
 #include "CommonIncludes.h"
 #include "Configuration.h"
-#include "FastLedEffect.h"
+
+#include "FastLedEffectSolid.h"
+#include "FastLedEffectTwinkle.h"
+#include "FastLedEffectCylon.h"
+#include "FastLedEffectIndexer.h"
+
 #include "src/LinkedList.h"
 
 // Forward Declarations
