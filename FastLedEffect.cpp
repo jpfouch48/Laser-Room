@@ -15,9 +15,10 @@
 // ****************************************************************************
 //
 // ****************************************************************************
-FastLedEffect::FastLedEffect(char *aEffectName) : 
+FastLedEffect::FastLedEffect(char *aEffectName, FastLedZone *aZone) : 
     mEffectName(aEffectName),
     mEnabled(true),
+    mZone(aZone),
     mDelay(1000)
 { 
   set_state(EffectState::PatterState_Init);
@@ -34,20 +35,20 @@ void FastLedEffect::reset()
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffect::loop(FastLedZone *aZone)
+bool FastLedEffect::loop()
 {
   switch (mState)
   {
     case EffectState::PatterState_Init:
-      if(true == init(aZone)) { set_state(EffectState::PatterState_Process); }
+      if(true == init()) { set_state(EffectState::PatterState_Process); }
     break;
 
     case EffectState::PatterState_Process:
-      if(true == process(aZone)) { set_state(EffectState::PatterState_End); }
+      if(true == process()) { set_state(EffectState::PatterState_End); }
     break;
 
     case EffectState::PatterState_End:
-      if(true == end(aZone)) { set_state(EffectState::PatterState_Complete); }
+      if(true == end()) { set_state(EffectState::PatterState_Complete); }
     break;    
 
     case EffectState::PatterState_Complete:
@@ -121,36 +122,46 @@ void FastLedEffect::set_enabled(bool aValue)
 // ****************************************************************************
 //
 // ****************************************************************************
-void FastLedEffect::fill_solid(FastLedZone *aZone)
+void FastLedEffect::fill_solid()
 {
-    for(int lIndex = aZone->get_start_index(); lIndex <= aZone->get_end_index(); lIndex++)
-      aZone->get_leds()[lIndex] = aZone->get_color();
+    for(int lIndex = mZone->get_start_index(); 
+            lIndex <= mZone->get_end_index(); 
+            lIndex++)
+      mZone->get_leds()[lIndex] = mZone->get_color();
 }
 
 // ****************************************************************************
 //
 // ****************************************************************************
-void FastLedEffect::fill_solid_black(FastLedZone *aZone)
+void FastLedEffect::fill_solid_black()
 {
-    for(int lIndex = aZone->get_start_index(); lIndex <= aZone->get_end_index(); lIndex++)
-      aZone->get_leds()[lIndex] = CRGB::Black;
+    for(int lIndex = mZone->get_start_index(); 
+            lIndex <= mZone->get_end_index(); 
+            lIndex++)
+      mZone->get_leds()[lIndex] = CRGB::Black;
 }
 
 // ****************************************************************************
 //
 // ****************************************************************************
-void FastLedEffect::set_brightness(FastLedZone *aZone)
+void FastLedEffect::set_brightness()
 {
-    for(int lIndex = aZone->get_start_index(); lIndex <= aZone->get_end_index(); lIndex++)
-      aZone->get_leds()[lIndex] = blend(CRGB::Black, aZone->get_color(), aZone->get_brightness());
+    for(int lIndex = mZone->get_start_index(); 
+            lIndex <= mZone->get_end_index(); 
+            lIndex++)
+      mZone->get_leds()[lIndex] = 
+        blend(CRGB::Black, mZone->get_color(), mZone->get_brightness());
 }
 
 // ****************************************************************************
 //
 // ****************************************************************************
-void FastLedEffect::set_brightness(FastLedZone *aZone, int aBrightness)
+void FastLedEffect::set_brightness(int aBrightness)
 {
-    for(int lIndex = aZone->get_start_index(); lIndex <= aZone->get_end_index(); lIndex++)
-      aZone->get_leds()[lIndex] = blend(CRGB::Black, aZone->get_color(), aBrightness);
+    for(int lIndex = mZone->get_start_index(); 
+            lIndex <= mZone->get_end_index(); 
+            lIndex++)
+      mZone->get_leds()[lIndex] = 
+        blend(CRGB::Black, mZone->get_color(), aBrightness);
 }
 

@@ -15,8 +15,8 @@
 // ****************************************************************************
 //
 // ****************************************************************************
-FastLedEffectTwinkle::FastLedEffectTwinkle() : 
-  FastLedEffect("twinkle"),
+FastLedEffectTwinkle::FastLedEffectTwinkle(FastLedZone *aZone) : 
+  FastLedEffect("twinkle", aZone),
   mDelay(100),
   mCount(1)
 { 
@@ -25,23 +25,24 @@ FastLedEffectTwinkle::FastLedEffectTwinkle() :
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectTwinkle::init(FastLedZone *aZone)
+bool FastLedEffectTwinkle::init()
 { 
-  set_brightness(aZone);
+  set_brightness();
   return true; 
 }
 
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectTwinkle::process(FastLedZone *aZone) 
+bool FastLedEffectTwinkle::process() 
 {
   EVERY_N_MILLISECONDS(mDelay)     
   {
-    fill_solid_black(aZone);
+    fill_solid_black();
 
     for(int lIndex = 0; lIndex < mCount; lIndex++)
-      aZone->get_leds()[random(aZone->get_start_index(), aZone->get_end_index())] = aZone->get_color();
+      mZone->get_leds()[random(mZone->get_start_index(), 
+                               mZone->get_end_index())] = mZone->get_color();
   }
   return false; 
 }
@@ -49,8 +50,8 @@ bool FastLedEffectTwinkle::process(FastLedZone *aZone)
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectTwinkle::end(FastLedZone *aZone)  
+bool FastLedEffectTwinkle::end()  
 { 
-  fill_solid_black(aZone);
+  fill_solid_black();
   return true; 
 }

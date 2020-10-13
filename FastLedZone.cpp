@@ -29,10 +29,10 @@ FastLedZone::FastLedZone(
     mNumLeds(0),
     mColor(aColor),
     mBrightness(aBrightness),
-    mEffectSolid(),
-    mEffectTwinkle(),
-    mEffectCylon(),
-    mEffectIndexer(),
+    mEffectSolid(this),
+    mEffectTwinkle(this),
+    mEffectCylon(this),
+    mEffectIndexer(this),
     mEffectList(),
     mCurrentEffect(NULL)
 {
@@ -94,7 +94,7 @@ FastLedEffect* FastLedZone::get_effect()
 // ****************************************************************************
 void FastLedZone::loop()
 {
-  mCurrentEffect->loop(this);
+  mCurrentEffect->loop();
 }
 
 // ****************************************************************************

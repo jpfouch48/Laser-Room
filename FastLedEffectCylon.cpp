@@ -15,8 +15,8 @@
 // ****************************************************************************
 //
 // ****************************************************************************
-FastLedEffectCylon::FastLedEffectCylon() : 
-  FastLedEffect("cylon"),
+FastLedEffectCylon::FastLedEffectCylon(FastLedZone *aZone) : 
+  FastLedEffect("cylon", aZone),
   mReturnDelay(50),
   mDelay(10),    
   mSize(5),
@@ -28,69 +28,75 @@ FastLedEffectCylon::FastLedEffectCylon() :
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectCylon::init(FastLedZone *aZone)
+bool FastLedEffectCylon::init()
 { 
   mInc = 1;
-  mIndex = aZone->get_start_index() - mSize;
+  mIndex = mZone->get_start_index() - mSize;
 
-  fill_solid_black(aZone);
-  set_brightness(aZone);
+  fill_solid_black();
+  set_brightness();
   return true; 
 }
 
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectCylon::process(FastLedZone *aZone) 
+bool FastLedEffectCylon::process() 
 {
   EVERY_N_MILLISECONDS(mDelay)     
   {
     if(mInc == 1)
     {
-      if(mIndex >= aZone->get_end_index() + 1 || mIndex == -1)
+      if(mIndex >= mZone->get_end_index() + 1 || mIndex == -1)
       {
         delay(mReturnDelay); // TODO: GET RID OF THIS
-        mIndex = aZone->get_end_index() + 1;
+        mIndex = mZone->get_end_index() + 1;
         mInc = -1;          
       }
       else
       {
-        fill_solid_black(aZone);
+        fill_solid_black();
 
         for(int lIndex = 0; lIndex < mSize; lIndex++)
         {
-          int lPixel = aZone->get_start_index() - (mIndex + lIndex);            
-          CRGB lColor = aZone->get_color();
+          int lPixel = mZone->get_start_index() - (mIndex + lIndex);            
+          CRGB lColor = mZone->get_color();
           if(lIndex == 0 || lIndex == (mSize - 1))
-            lColor = CRGB(aZone->get_color().r/10, aZone->get_color().g/10, aZone->get_color().b/10);
+            lColor = CRGB(mZone->get_color().r/10, 
+                          mZone->get_color().g/10, 
+                          mZone->get_color().b/10);
 
-          if(lPixel >= aZone->get_start_index() && lPixel < aZone->get_end_index())
-            aZone->get_leds()[lPixel] = lColor;
+          if(lPixel >= mZone->get_start_index() && 
+             lPixel <= mZone->get_end_index())
+            mZone->get_leds()[lPixel] = lColor;
         }
         mIndex++;          
       }       
     }
     else
     {
-      if(mIndex <= aZone->get_start_index() - mSize)
+      if(mIndex <= mZone->get_start_index() - mSize)
       {
         delay(mReturnDelay); // TODO: GET RID OF THIS
-        mIndex = aZone->get_start_index() - mSize;
+        mIndex = mZone->get_start_index() - mSize;
         mInc = 1;          
       }
       else
       {
-        fill_solid_black(aZone);
+        fill_solid_black();
 
         for(int lIndex = mSize - 1; lIndex >= 0; lIndex--)
         {
-          int lPixel = aZone->get_end_index() + (mIndex - lIndex);            
-          CRGB lColor = aZone->get_color();
+          int lPixel = mZone->get_end_index() + (mIndex - lIndex);            
+          CRGB lColor = mZone->get_color();
           if(lIndex == 0 || lIndex == (mSize - 1))
-            lColor = CRGB(aZone->get_color().r/10, aZone->get_color().g/10, aZone->get_color().b/10);
+            lColor = CRGB(mZone->get_color().r/10, 
+                          mZone->get_color().g/10, 
+                          mZone->get_color().b/10);
 
-          if(lPixel >= aZone->get_start_index() && lPixel < aZone->get_end_index())
-            aZone->get_leds()[lPixel] = lColor;
+          if(lPixel >= mZone->get_start_index() && 
+             lPixel <= mZone->get_end_index())
+            mZone->get_leds()[lPixel] = lColor;
         }
         mIndex--;
       }               
@@ -103,8 +109,8 @@ bool FastLedEffectCylon::process(FastLedZone *aZone)
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectCylon::end(FastLedZone *aZone)  
+bool FastLedEffectCylon::end()  
 { 
-  fill_solid_black(aZone);
+  fill_solid_black();
   return true; 
 }

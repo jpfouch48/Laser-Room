@@ -19,22 +19,22 @@
 class FastLedEffectCylon : public FastLedEffect
 {
 public:
-  FastLedEffectCylon();
+  FastLedEffectCylon(FastLedZone *aZone);
 
   // **************************************************************************
   //
   // **************************************************************************
-  virtual bool init(FastLedZone *aZone);
+  virtual bool init();
 
   // **************************************************************************
   //
   // **************************************************************************
-  virtual bool process(FastLedZone *aZone);
+  virtual bool process();
 
   // **************************************************************************
   //
   // **************************************************************************
-  virtual bool end(FastLedZone *aZone);
+  virtual bool end();
 
 private:
   int mReturnDelay;

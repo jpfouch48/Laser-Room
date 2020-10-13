@@ -15,8 +15,8 @@
 // ****************************************************************************
 //
 // ****************************************************************************
-FastLedEffectSolid::FastLedEffectSolid() : 
-  FastLedEffect("solid"),
+FastLedEffectSolid::FastLedEffectSolid(FastLedZone *aZone) : 
+  FastLedEffect("solid", aZone),
   mHasInit(false),
   mHasEnd(false),
   mFadeBrightness(0),
@@ -27,22 +27,22 @@ FastLedEffectSolid::FastLedEffectSolid() :
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectSolid::init(FastLedZone *aZone)
+bool FastLedEffectSolid::init()
 { 
   if(false == mHasInit)
   {
-    fill_solid(aZone);
+    fill_solid();
     mFadeBrightness = 0;
     mHasInit = true;
   }
 
   EVERY_N_MILLISECONDS(mFadeDelay) 
   {
-    set_brightness(aZone, mFadeBrightness);
+    set_brightness(mFadeBrightness);
     mFadeBrightness++;
   }
 
-  if(mFadeBrightness == aZone->get_brightness())
+  if(mFadeBrightness == mZone->get_brightness())
   {
     mHasInit = false;
     return true;
@@ -54,26 +54,26 @@ bool FastLedEffectSolid::init(FastLedZone *aZone)
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectSolid::process(FastLedZone *aZone) 
+bool FastLedEffectSolid::process() 
 {
-  fill_solid(aZone);
+  fill_solid();
   return false; 
 }
 
 // ****************************************************************************
 //
 // ****************************************************************************
-bool FastLedEffectSolid::end(FastLedZone *aZone)  
+bool FastLedEffectSolid::end()  
 { 
   if(false == mHasEnd)
   {
-    mFadeBrightness = aZone->get_brightness();
+    mFadeBrightness = mZone->get_brightness();
     mHasEnd = true;
   }
 
   EVERY_N_MILLISECONDS(mFadeDelay) 
   {
-    set_brightness(aZone, mFadeBrightness);
+    set_brightness(mFadeBrightness);
     mFadeBrightness--;
   }
 

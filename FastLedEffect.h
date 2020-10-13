@@ -34,7 +34,7 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  FastLedEffect(char *aEffectName);
+  FastLedEffect(char *aEffectName, FastLedZone *aZone);
 
   // **************************************************************************
   //
@@ -44,7 +44,7 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  bool loop(FastLedZone* aZone);
+  bool loop();
 
   // **************************************************************************
   //
@@ -63,38 +63,38 @@ public:
   const char*  get_effect_name() { return mEffectName; }
 
 protected:
-  virtual bool init   (FastLedZone *aZone) { return true; };
-  virtual bool process(FastLedZone *aZone) { return true; };
-  virtual bool end    (FastLedZone *aZone) { return true; };
+  virtual bool init   () { return true; };
+  virtual bool process() { return true; };
+  virtual bool end    () { return true; };
 
 
   // **************************************************************************
   //
   // **************************************************************************
-  void fill_solid(FastLedZone *aZone);
+  void fill_solid();
 
   // **************************************************************************
   //
   // **************************************************************************
-  void fill_solid_black(FastLedZone *aZone);
+  void fill_solid_black();
 
   // **************************************************************************
   //
   // **************************************************************************
-  void set_brightness(FastLedZone *aZone);
+  void set_brightness();
 
   // **************************************************************************
   //
   // **************************************************************************
-  void set_brightness(FastLedZone *aZone, int aBrightness);
+  void set_brightness(int aBrightness);
 
 
-  bool mEnabled;
-  int16_t mDelay;
-
+  bool         mEnabled;
+  int16_t      mDelay;
+  FastLedZone* mZone;
 private:
-  EffectState mState;
-  char        *mEffectName;
+  EffectState  mState;
+  char*        mEffectName;
 };
 
 #endif

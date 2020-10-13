@@ -19,29 +19,28 @@
 class FastLedEffectSolid : public FastLedEffect
 {
 public:
-  FastLedEffectSolid();
+  FastLedEffectSolid(FastLedZone *aZone);
 
   // **************************************************************************
   //
   // **************************************************************************
-  virtual bool init(FastLedZone *aZone);
+  virtual bool init();
 
   // **************************************************************************
   //
   // **************************************************************************
-  virtual bool process(FastLedZone *aZone);
+  virtual bool process();
 
   // **************************************************************************
   //
   // **************************************************************************
-  virtual bool end(FastLedZone *aZone);
+  virtual bool end();
 
 private:
   bool mHasInit;
   bool mHasEnd;
   int mFadeBrightness;
   int mFadeDelay;
-
 };
 
 #endif
