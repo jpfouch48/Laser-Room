@@ -43,7 +43,7 @@ FastLedEffectIndexer::FastLedEffectIndexer(FastLedZone *aZone) :
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectIndexer::init()
+bool FastLedEffectIndexer::init(bool aFirstTimeInState)
 { 
   mIndex = mZone->get_start_index();
   fill_solid_black();
@@ -63,7 +63,7 @@ bool FastLedEffectIndexer::init()
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectIndexer::process() 
+bool FastLedEffectIndexer::process(bool aFirstTimeInState) 
 {
   EVERY_N_MILLISECONDS(mDelay)     
   {
@@ -80,22 +80,4 @@ bool FastLedEffectIndexer::process()
   }
 
   return false; 
-}
-
-// ****************************************************************************
-// Function:
-// ****************************************************************************
-// Arguments:
-//
-// ****************************************************************************
-// Description:
-//
-// ****************************************************************************
-// Notes:
-//
-// ****************************************************************************
-bool FastLedEffectIndexer::end()  
-{ 
-  fill_solid_black();
-  return true; 
 }

@@ -70,9 +70,18 @@ protected:
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-  virtual bool init   () { return true; };
-  virtual bool process() { return true; };
-  virtual bool end    () { return true; };
+  virtual bool init   (bool aFirstTimeInState) { return true; };
+  virtual bool process(bool aFirstTimeInState) { return true; };
+  virtual bool end    (bool aFirstTimeInState) 
+  { 
+    if(true == fade_out(aFirstTimeInState))
+    {
+      fill_solid_black();
+      return true;
+    }
+
+    return false;
+  };
 
 
   // **************************************************************************
@@ -83,13 +92,22 @@ protected:
   void set_brightness();
   void set_brightness(int aBrightness);
 
+  // **************************************************************************
+  // See implementation file for details
+  // **************************************************************************
+  bool fade_out(bool aFirstTimeInState);
+  bool fade_in(bool aFirstTimeInState);
 
   bool         mEnabled;
   int16_t      mDelay;
   FastLedZone* mZone;
+  int mFadeBrightness;
+  int mFadeDelay;
+
 private:
   EffectState  mState;
   char*        mEffectName;
+  bool         mFirstTimeInState;
 };
 
 #endif

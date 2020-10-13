@@ -28,9 +28,8 @@ public:
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-  virtual bool init();
-  virtual bool process();
-  virtual bool end();
+  virtual bool init(bool aFirstTimeInState);
+  virtual bool process(bool aFirstTimeInState);
 
 private:
   int mDelay;

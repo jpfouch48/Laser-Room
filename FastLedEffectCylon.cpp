@@ -46,7 +46,7 @@ FastLedEffectCylon::FastLedEffectCylon(FastLedZone *aZone) :
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectCylon::init()
+bool FastLedEffectCylon::init(bool aFirstTimeInState)
 { 
   mInc = 1;
   mIndex = mZone->get_start_index() - mSize;
@@ -68,7 +68,7 @@ bool FastLedEffectCylon::init()
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectCylon::process() 
+bool FastLedEffectCylon::process(bool aFirstTimeInState) 
 {
   EVERY_N_MILLISECONDS(mDelay)     
   {
@@ -133,20 +133,3 @@ bool FastLedEffectCylon::process()
   return false; 
 }
 
-// ****************************************************************************
-// Function:
-// ****************************************************************************
-// Arguments:
-//
-// ****************************************************************************
-// Description:
-//
-// ****************************************************************************
-// Notes:
-//
-// ****************************************************************************
-bool FastLedEffectCylon::end()  
-{ 
-  fill_solid_black();
-  return true; 
-}

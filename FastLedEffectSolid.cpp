@@ -25,11 +25,7 @@
 //
 // ****************************************************************************
 FastLedEffectSolid::FastLedEffectSolid(FastLedZone *aZone) : 
-  FastLedEffect("solid", aZone),
-  mHasInit(false),
-  mHasEnd(false),
-  mFadeBrightness(0),
-  mFadeDelay(10)
+  FastLedEffect("solid", aZone)
 { 
 }
 
@@ -45,28 +41,14 @@ FastLedEffectSolid::FastLedEffectSolid(FastLedZone *aZone) :
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectSolid::init()
+bool FastLedEffectSolid::init(bool aFirstTimeInState)
 { 
-  if(false == mHasInit)
+  if(aFirstTimeInState)
   {
-    fill_solid();
-    mFadeBrightness = 0;
-    mHasInit = true;
+    process(aFirstTimeInState);
   }
 
-  EVERY_N_MILLISECONDS(mFadeDelay) 
-  {
-    set_brightness(mFadeBrightness);
-    mFadeBrightness++;
-  }
-
-  if(mFadeBrightness == mZone->get_brightness())
-  {
-    mHasInit = false;
-    return true;
-  }
-
-  return false; 
+  return fade_in(aFirstTimeInState);
 }
 
 // ****************************************************************************
@@ -81,43 +63,8 @@ bool FastLedEffectSolid::init()
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectSolid::process() 
+bool FastLedEffectSolid::process(bool aFirstTimeInState) 
 {
   fill_solid();
-  return false; 
-}
-
-// ****************************************************************************
-// Function:
-// ****************************************************************************
-// Arguments:
-//
-// ****************************************************************************
-// Description:
-//
-// ****************************************************************************
-// Notes:
-//
-// ****************************************************************************
-bool FastLedEffectSolid::end()  
-{ 
-  if(false == mHasEnd)
-  {
-    mFadeBrightness = mZone->get_brightness();
-    mHasEnd = true;
-  }
-
-  EVERY_N_MILLISECONDS(mFadeDelay) 
-  {
-    set_brightness(mFadeBrightness);
-    mFadeBrightness--;
-  }
-
-  if(mFadeBrightness == 0)
-  {
-    mHasEnd = false;
-    return true;
-  }
-
   return false; 
 }

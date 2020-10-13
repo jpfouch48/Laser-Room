@@ -43,7 +43,7 @@ FastLedEffectTwinkle::FastLedEffectTwinkle(FastLedZone *aZone) :
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectTwinkle::init()
+bool FastLedEffectTwinkle::init(bool aFirstTimeInState)
 { 
   set_brightness();
   return true; 
@@ -61,7 +61,7 @@ bool FastLedEffectTwinkle::init()
 // Notes:
 //
 // ****************************************************************************
-bool FastLedEffectTwinkle::process() 
+bool FastLedEffectTwinkle::process(bool aFirstTimeInState) 
 {
   EVERY_N_MILLISECONDS(mDelay)     
   {
@@ -74,20 +74,3 @@ bool FastLedEffectTwinkle::process()
   return false; 
 }
 
-// ****************************************************************************
-// Function:
-// ****************************************************************************
-// Arguments:
-//
-// ****************************************************************************
-// Description:
-//
-// ****************************************************************************
-// Notes:
-//
-// ****************************************************************************
-bool FastLedEffectTwinkle::end()  
-{ 
-  fill_solid_black();
-  return true; 
-}
