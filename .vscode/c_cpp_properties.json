@@ -3,13 +3,11 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Users\\jon-paul.faucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
-                "C:\\Users\\jon-paul.faucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.2\\**",
-                "C:\\Users\\jpfaucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.4\\**",
-                "C:\\Users\\jpfaucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
-                "C:\\Users\\jfaucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\**",
-                "C:\\Users\\jfaucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
-                "C:\\Users\\jon-paul.faucher\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.4\\**"
+                "~\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
+                "~\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.4\\**",
+                "~\\Documents\\Arduino\\libraries\\PubSubClient\\src\\**",
+                "~\\Documents\\Arduino\\libraries\\ArduinoJson\\src\\**",
+                "~\\Documents\\Arduino\\libraries\\FastLED\\**"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64"
