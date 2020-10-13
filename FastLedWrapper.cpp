@@ -318,7 +318,7 @@ const char* FastLedWrapper::get_effect_name(char* aZone)
 
   // TODO: NEED AN ERROR 
   if(lZone == NULL || lZone->get_effect() == NULL)
-    return 0;   
+    return "";   
 
   return lZone->get_effect()->get_effect_name();
 }
