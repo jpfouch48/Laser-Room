@@ -1,8 +1,24 @@
 #ifndef FAST_LED_WRAPPER_HEADER
 #define FAST_LED_WRAPPER_HEADER
+// ****************************************************************************
+//  Filename: 
+//
+//  Author: JP Faucher (jonpaul.faucher@gmail.com)
+// ****************************************************************************
+//  Details:
+//
+//
+//  Notes:
+//
+// ****************************************************************************
 
 #include "CommonIncludes.h"
 #include "Configuration.h"
+#include "FastLedEffect.h"
+#include "LinkedList.h"
+
+// Forward Declarations
+class FastLedZone;
 
 // ****************************************************************************
 //

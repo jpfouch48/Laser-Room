@@ -1,5 +1,16 @@
 #ifndef DHT_WRAPPER_HEADER
 #define DHT_WRAPPER_HEADER
+// ****************************************************************************
+//  Filename: 
+//
+//  Author: JP Faucher (jonpaul.faucher@gmail.com)
+// ****************************************************************************
+//  Details:
+//
+//
+//  Notes:
+//
+// ****************************************************************************
 
 #include "src/DHTesp/DHTesp.h"
 
@@ -12,52 +23,28 @@ public:
     // ************************************************************************
     //
     // ************************************************************************
-    DHTWrapper(int aPin) : mPin(aPin)
-    {
-    }
+    DHTWrapper(int aPin);
 
     // ************************************************************************
     //
     // ************************************************************************
-    void setup()
-    {
-        pinMode(mPin, INPUT_PULLUP);
-        mDht.setup(mPin, DHTesp::DHT22);
-        mTimeStamp = millis();
-    }
+    void setup();
 
     // ************************************************************************
     //
     // ************************************************************************
-    float get_temp()          { return DHTesp::toFahrenheit(mTempAndHumidity.temperature); }
-    float get_humidity()      { return mTempAndHumidity.humidity; }
-    float get_dew_point()     { return mDht.computeDewPoint(get_temp(), get_humidity(), true); }
+    float get_temp();
+    float get_humidity();
+    float get_dew_point();
 
-    char *get_sz_temp()       { return mSzTemp; }
-    char *get_sz_humidity()   { return mSzHumidity; }
-    char *get_sz_dew_point()  { return mSzDewPoint; }
+    char *get_sz_temp();
+    char *get_sz_humidity();
+    char *get_sz_dew_point();
 
     // ************************************************************************
     //
     // ************************************************************************
-    bool loop()
-    {
-        // Updated based on sampling interval
-        if(millis() - mTimeStamp > mDht.getMinimumSamplingPeriod())
-        {
-            mTempAndHumidity = mDht.getTempAndHumidity();
-
-            dtostrf(get_temp(),      7, 3, mSzTemp);
-            dtostrf(get_humidity(),  7, 3, mSzHumidity);
-            dtostrf(get_dew_point(), 7, 3, mSzDewPoint);
-
-            mTimeStamp = millis();
-
-            return true;
-        }
-
-        return false;
-    }
+    bool loop();
 
 protected:
 

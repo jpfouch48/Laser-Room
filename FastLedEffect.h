@@ -1,5 +1,16 @@
 #ifndef FAST_LED_EFFECT_HEADER
 #define FAST_LED_EFFECT_HEADER
+// ****************************************************************************
+//  Filename: 
+//
+//  Author: JP Faucher (jonpaul.faucher@gmail.com)
+// ****************************************************************************
+//  Details:
+//
+//
+//  Notes:
+//
+// ****************************************************************************
 
 #include "CommonIncludes.h"
 

@@ -3,7 +3,19 @@
 #include "DHTWrapper.h"
 #include "DallasTempWrapper.h"
 #include "FastLedWrapper.h"
-
+#include "FastLedZone.h"
+#include "LinkedList.h"
+// ****************************************************************************
+//  Filename: 
+//
+//  Author: JP Faucher (jonpaul.faucher@gmail.com)
+// ****************************************************************************
+//  Details:
+//
+//
+//  Notes:
+//
+// ****************************************************************************
 
 // Temp Wrappers
 DHTWrapper gDHTRoomTemp(DHT_PIN);
