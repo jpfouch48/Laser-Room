@@ -100,7 +100,9 @@ bool FastLedEffect::loop()
     break;
   }
 
-  mFirstTimeInState = false;
+  // Reset our state init flag once weve run once.
+  if(true == mFirstTimeInState)
+    mFirstTimeInState = false;
 
   FastLED.show();
 }
