@@ -86,6 +86,7 @@ private:
   // RGB Defines
   FastLedWrapper mRgbWrapper;
 
+  FastLedZone mZone0; // Status zone
   FastLedZone mZone1;
   FastLedZone mZone2;
   FastLedZone mZone3;

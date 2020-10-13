@@ -80,7 +80,7 @@
 // ****************************************************************************
 #define RGB_LED_TYPE         WS2812B
 #define RGB_COLOR_ORDER      GRB
-#define RGB_NUM_LEDS         30
+#define RGB_NUM_LEDS         40
 
 // Include a configuration private file to house
 // your private configs you don't want to store in git
