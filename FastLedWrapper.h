@@ -11,7 +11,6 @@
 //  Notes:
 //
 // ****************************************************************************
-
 #include "CommonIncludes.h"
 #include "Configuration.h"
 #include "FastLedEffect.h"
