@@ -17,9 +17,9 @@ LaserRoom::LaserRoom() :
   mWifiClient(),
   mMqttClient(mWifiClient),
   mRgbWrapper(),
-  mZone1("zone1",  0,  9, CRGB(0,   0,   255), 50),
-  mZone2("zone2", 10, 19, CRGB(0,   255, 0  ), 50),
-  mZone3("zone3", 20, 29, CRGB(255, 0,   0  ), 50),
+  mZone1("zone1",  0,  9, "solid", CRGB(0,   0,   255), 50),
+  mZone2("zone2", 10, 19, "solid", CRGB(0,   255, 0  ), 50),
+  mZone3("zone3", 20, 29, "solid", CRGB(255, 0,   0  ), 50),
   mChangeCount(0),
   mAppState(LaserRoom::AppState::AppState_Init)
 {

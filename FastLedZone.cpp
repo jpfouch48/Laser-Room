@@ -15,11 +15,13 @@
 // ****************************************************************************
 //
 // ****************************************************************************
-FastLedZone::FastLedZone(char*   aZoneName, 
-            int     aStartIndex, 
-            int     aEndIndex, 
-            CRGB    aColor=CRGB(50,50,50),
-            uint8_t aBrightness=50) : 
+FastLedZone::FastLedZone(
+            char*       aZoneName, 
+            int         aStartIndex, 
+            int         aEndIndex, 
+            const char* aEffectName,
+            CRGB        aColor=CRGB(50,50,50),
+            uint8_t     aBrightness=50) : 
     mZoneName(aZoneName),
     mStartIndex(aStartIndex), 
     mEndIndex(aEndIndex),
@@ -32,12 +34,14 @@ FastLedZone::FastLedZone(char*   aZoneName,
     mEffectCylon(),
     mEffectIndexer(),
     mEffectList(),
-    mCurrentEffect(&mEffectSolid)
+    mCurrentEffect(NULL)
 {
   mEffectList.push_back(&mEffectSolid);
   mEffectList.push_back(&mEffectTwinkle);
   mEffectList.push_back(&mEffectCylon);
   mEffectList.push_back(&mEffectIndexer);  
+
+  set_effect(aEffectName);
 }
 
 // ****************************************************************************

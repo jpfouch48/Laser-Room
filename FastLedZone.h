@@ -29,11 +29,12 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  FastLedZone(char*   aZoneName, 
-              int     aStartIndex, 
-              int     aEndIndex, 
-              CRGB    aColor,
-              uint8_t aBrightness);
+  FastLedZone(char*       aZoneName, 
+              int         aStartIndex, 
+              int         aEndIndex, 
+              const char* aEffectName,              
+              CRGB        aColor,
+              uint8_t     aBrightness);
 
   // **************************************************************************
   //
