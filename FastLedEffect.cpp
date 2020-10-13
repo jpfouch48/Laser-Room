@@ -28,7 +28,10 @@ FastLedEffect::FastLedEffect(char *aEffectName, FastLedZone *aZone) :
     mEffectName(aEffectName),
     mEnabled(true),
     mZone(aZone),
-    mDelay(1000)
+    mDelay(1000),
+    mFirstTimeInState(true),
+    mFadeBrightness(-1),
+    mFadeDelay(10)
 { 
   set_state(EffectState::PatterState_Init);
 }
@@ -67,15 +70,24 @@ bool FastLedEffect::loop()
   switch (mState)
   {
     case EffectState::PatterState_Init:
-      if(true == init()) { set_state(EffectState::PatterState_Process); }
+      if(true == init(mFirstTimeInState))
+      { 
+        set_state(EffectState::PatterState_Process); 
+      }
     break;
 
     case EffectState::PatterState_Process:
-      if(true == process()) { set_state(EffectState::PatterState_End); }
+      if(true == process(mFirstTimeInState)) 
+      { 
+        set_state(EffectState::PatterState_End); 
+      }
     break;
 
     case EffectState::PatterState_End:
-      if(true == end()) { set_state(EffectState::PatterState_Complete); }
+      if(true == end(mFirstTimeInState)) 
+      { 
+        set_state(EffectState::PatterState_Complete); 
+      }
     break;    
 
     case EffectState::PatterState_Complete:
@@ -87,6 +99,8 @@ bool FastLedEffect::loop()
       }
     break;
   }
+
+  mFirstTimeInState = false;
 
   FastLED.show();
 }
@@ -106,6 +120,7 @@ bool FastLedEffect::loop()
 void FastLedEffect::set_state(EffectState aValue)
 {
   mState = aValue;
+  mFirstTimeInState = true;
 
   switch(mState)
   {
@@ -246,3 +261,68 @@ void FastLedEffect::set_brightness(int aBrightness)
         blend(CRGB::Black, mZone->get_color(), aBrightness);
 }
 
+// ****************************************************************************
+// Function:
+// ****************************************************************************
+// Arguments:
+//
+// ****************************************************************************
+// Description:
+//
+// ****************************************************************************
+// Notes:
+//
+// ****************************************************************************
+bool FastLedEffect::fade_out(bool aFirstTimeInState)
+{
+  if(true == aFirstTimeInState)
+  {
+    mFadeBrightness = mZone->get_brightness();
+  }
+
+  EVERY_N_MILLISECONDS(mFadeDelay) 
+  {
+    set_brightness(mFadeBrightness);
+    mFadeBrightness--;
+  }
+
+  if(mFadeBrightness == 0)
+  {
+    return true;
+  }
+
+  return false; 
+}
+
+// ****************************************************************************
+// Function:
+// ****************************************************************************
+// Arguments:
+//
+// ****************************************************************************
+// Description:
+//
+// ****************************************************************************
+// Notes:
+//
+// ****************************************************************************
+bool FastLedEffect::fade_in(bool aFirstTimeInState)
+{
+  if(true == aFirstTimeInState)
+  {
+    mFadeBrightness = 0;
+  }
+
+  EVERY_N_MILLISECONDS(mFadeDelay) 
+  {
+    set_brightness(mFadeBrightness);
+    mFadeBrightness++;
+  }
+
+  if(mFadeBrightness == mZone->get_brightness())
+  {
+    return true;
+  }
+
+  return false; 
+}
