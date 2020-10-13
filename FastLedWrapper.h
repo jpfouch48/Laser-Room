@@ -14,7 +14,7 @@
 #include "CommonIncludes.h"
 #include "Configuration.h"
 #include "FastLedEffect.h"
-#include "LinkedList.h"
+#include "src/LinkedList.h"
 
 // Forward Declarations
 class FastLedZone;

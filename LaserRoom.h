@@ -13,11 +13,13 @@
 // ****************************************************************************
 #include "CommonIncludes.h"
 #include "Configuration.h"
-#include "DHTWrapper.h"
-#include "DallasTempWrapper.h"
 #include "FastLedWrapper.h"
 #include "FastLedZone.h"
-#include "LinkedList.h"
+
+
+#include "src/DHTWrapper/DHTWrapper.h"
+#include "src/DallasTempWrapper/DallasTempWrapper.h"
+#include "src/LinkedList.h"
 
 // ****************************************************************************
 //

@@ -9,7 +9,11 @@
                 "~\\Documents\\Arduino\\libraries\\ArduinoJson\\src\\**",
                 "~\\Documents\\Arduino\\libraries\\FastLED\\**",
                 "~\\Documents\\Arduino\\libraries\\OneWire\\**",
-                "~\\Documents\\Arduino\\libraries\\DallasTemperature\\**"
+                "~\\Documents\\Arduino\\libraries\\DallasTemperature\\**",
+                ".\\src\\DallasTempWrapper\\**",
+                ".\\src\\DHTesp\\**",
+                ".\\src\\DHTWrapper\\**",
+                ".\\src\\**"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64"
