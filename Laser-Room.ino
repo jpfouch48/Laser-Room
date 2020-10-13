@@ -1,13 +1,4 @@
-// General Includes
-#include <stdlib.h>
-
-// WIFI/MQTT Includes
-#include <ESP8266WiFi.h>
-#include <PubSubClient.h>
-#include <ArduinoJson.h>
-#include <ArduinoOTA.h>
-
-// Local Includes
+#include "CommonIncludes.h"
 #include "Configuration.h"
 #include "DHTWrapper.h"
 #include "DallasTempWrapper.h"
@@ -29,9 +20,9 @@ char gMqttBuffer[MQTT_BUFFER_WIDTH];
 // RGB Defines
 FastLedWrapper gRgbWrapper;
 
-FastLedZone gZone1("zone1",  0,  9);
-FastLedZone gZone2("zone2", 10, 19);
-FastLedZone gZone3("zone3", 20, 29);
+FastLedZone gZone1("zone1",  0,  9, CRGB(0,   0,   255), 50);
+FastLedZone gZone2("zone2", 10, 19, CRGB(0,   255, 0  ), 50);
+FastLedZone gZone3("zone3", 20, 29, CRGB(255, 0,   0  ), 50);
 
 // Status variables
 char gIpAddress[20];
@@ -63,33 +54,33 @@ void change_state(AppState aState)
 
   if(gAppState == AppState::AppState_WifiConnecting)
   {
-    gRgbWrapper.set_color_red(255);
-    gRgbWrapper.set_color_green(0);
-    gRgbWrapper.set_color_blue(0);
-    gRgbWrapper.set_effect("cylon");
+//    gRgbWrapper.set_color_red(255);
+//    gRgbWrapper.set_color_green(0);
+//    gRgbWrapper.set_color_blue(0);
+//    gRgbWrapper.set_effect("cylon");
     Serial.println(F("Changing to WifiConnecting state"));
   }
   else if(gAppState == AppState::AppState_MqttConnecting)
   {
-    gRgbWrapper.set_color_red(0);
-    gRgbWrapper.set_color_green(255);
-    gRgbWrapper.set_color_blue(0);
+//    gRgbWrapper.set_color_red(0);
+//    gRgbWrapper.set_color_green(255);
+//    gRgbWrapper.set_color_blue(0);
     Serial.println(F("Changing to MqttConnecting state"));
   }
   else if(gAppState == AppState::AppState_Running)
   {
-    gRgbWrapper.set_color_red(255);
-    gRgbWrapper.set_color_green(255);
-    gRgbWrapper.set_color_blue(255);
-    gRgbWrapper.set_effect("solid");
+//    gRgbWrapper.set_color_red(255);
+//    gRgbWrapper.set_color_green(255);
+//    gRgbWrapper.set_color_blue(255);
+//    gRgbWrapper.set_effect("solid");
     Serial.println(F("Changing to Running state"));    
   }
   else if (gAppState == AppState::AppState_Updating)
   {
-    gRgbWrapper.set_color_red(0);
-    gRgbWrapper.set_color_green(0);
-    gRgbWrapper.set_color_blue(255);
-    gRgbWrapper.set_effect("cylon");
+//    gRgbWrapper.set_color_red(0);
+//    gRgbWrapper.set_color_green(0);
+//    gRgbWrapper.set_color_blue(255);
+//    gRgbWrapper.set_effect("cylon");
     Serial.println(F("Changing to Updating state"));    
   }
   else if(gAppState == AppState::AppState_Init)
@@ -105,6 +96,10 @@ void setup()
 { 
   Serial.begin(9600);
 
+  // Setup RGB
+  gRgbWrapper.setup(); 
+  gRgbWrapper.set_brightness(50); 
+
   // Setup Zones
   gRgbWrapper.add_zone(&gZone1);
   gRgbWrapper.add_zone(&gZone2);
@@ -113,10 +108,6 @@ void setup()
   // Setup Temp Sensors
   gDHTRoomTemp.setup();
   gChillerTemp.setup();
-
-  // Setup RGB
-  gRgbWrapper.setup(); 
-  gRgbWrapper.set_brightness(50); 
 
   change_state(AppState::AppState_Init);    
 
@@ -436,7 +427,8 @@ void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint)
   Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  
-  gMqttClient.publish(MQTT_ROOM_TEMP_SENSOR_TOPIC, lSzBuffer, true);
+  if(gAppState == AppState::AppState_Running)
+    gMqttClient.publish(MQTT_ROOM_TEMP_SENSOR_TOPIC, lSzBuffer, true);
 #endif
 
   yield();  
@@ -458,7 +450,8 @@ void publish_chiller_temp_data(char *aTemp)
   Serial.println(lSzBuffer);
 
 #ifndef DISABLE_MQTT  
-  gMqttClient.publish(MQTT_CHILLER_TEMP_SENSOR_TOPIC, lSzBuffer, true);
+  if(gAppState == AppState::AppState_Running)
+    gMqttClient.publish(MQTT_CHILLER_TEMP_SENSOR_TOPIC, lSzBuffer, true);
 #endif
 
   yield();  
@@ -499,7 +492,9 @@ void publish_led_data(char *aZone)
 
   Serial.print(F("Publising Led to State Topic: "));
   Serial.println(lStateTopic);
-  gMqttClient.publish(lStateTopic, lSzBuffer, true);
+  
+  if(gAppState == AppState::AppState_Running)
+    gMqttClient.publish(lStateTopic, lSzBuffer, true);
 #endif
 
   yield();  
@@ -522,8 +517,9 @@ void publish_status_data()
   Serial.print(F("Status Message: "));
   Serial.println(lSzBuffer);
 
-#ifndef DISABLE_MQTT  
-  gMqttClient.publish(MQTT_ROOM_STATUS_SENSOR_TOPIC, lSzBuffer, true);
+#ifndef DISABLE_MQTT
+  if(gAppState == AppState::AppState_Running)
+    gMqttClient.publish(MQTT_ROOM_STATUS_SENSOR_TOPIC, lSzBuffer, true);
 #endif
 
   yield();  
