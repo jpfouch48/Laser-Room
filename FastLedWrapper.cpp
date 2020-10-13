@@ -16,17 +16,8 @@
 //
 // ****************************************************************************
 FastLedWrapper::FastLedWrapper() : 
-  mEffectSolid(),
-  mEffectTwinkle(),
-  mEffectCylon(),
-  mEffectIndexer(),
-  mEffectList(),
   mZoneList()
 {
-  mEffectList.push_back(&mEffectSolid);
-  mEffectList.push_back(&mEffectTwinkle);
-  mEffectList.push_back(&mEffectCylon);
-  mEffectList.push_back(&mEffectIndexer);
 }
 
 // ****************************************************************************
@@ -211,8 +202,10 @@ void FastLedWrapper::set_enabled(bool aValue, char* aZone)
   }
   else
   {
-    if(NULL != lZone->get_effect())
-      lZone->get_effect()->set_enabled(aValue); 
+    if(true == aValue)
+      lZone->enable_zone(); 
+    else
+      lZone->disable_zone(); 
   }
 }
 
@@ -237,34 +230,11 @@ bool FastLedWrapper::set_effect(const char *aEffectName, char* aZone)
 {
   FastLedZone* lZone = get_zone(aZone);
 
-  Iterator<FastLedEffect*> lIter = mEffectList.begin();
+  if(lZone != NULL)
+    return lZone->set_effect(aEffectName);
 
-  while(lIter != NULL)
-  {
-    if(0 == strcmp(aEffectName, (*lIter)->get_effect_name()))
-    {
-      Serial.print(F("Found Effect: "));
-      Serial.println(aEffectName);
-
-      if(lZone == NULL)
-      {
-        Serial.print(F("FLW::set_effect - invalid zone: "));
-        Serial.println(aZone);
-      }
-      else
-      {
-        lZone->set_effect(*lIter);
-        lZone->get_effect()->reset();
-      }
-
-      return true;
-    }
-
-    lIter++;
-  }
-
-  Serial.print(F("Unknown Effect: "));
-  Serial.println(aEffectName);
+  Serial.print(F("Zone Not Found: "));
+  Serial.println(aZone);
 
   return false;
 }
@@ -333,10 +303,10 @@ bool FastLedWrapper::get_enabled(char* aZone)
   FastLedZone* lZone = get_zone(aZone);
 
   // TODO: NEED AN ERROR 
-  if(lZone == NULL || lZone->get_effect() == NULL)
+  if(lZone == NULL)
     return 0;   
 
-  return lZone->get_effect()->get_enabled();
+  return lZone->get_enabled();
 }
 
 // ****************************************************************************
@@ -356,7 +326,6 @@ const char* FastLedWrapper::get_effect_name(char* aZone)
 // ****************************************************************************
 //
 // ****************************************************************************
-Iterator<FastLedEffect*> FastLedWrapper::get_effects() { return mEffectList.begin(); }
 Iterator<FastLedZone*>   FastLedWrapper::get_zones()   { return mZoneList.begin();   }
 
 // ****************************************************************************
@@ -365,7 +334,6 @@ Iterator<FastLedZone*>   FastLedWrapper::get_zones()   { return mZoneList.begin(
 bool FastLedWrapper::add_zone(FastLedZone *aZone)
 {
   aZone->set_leds(mLeds, RGB_NUM_LEDS);
-  aZone->set_effect(&mEffectSolid);
   
   // TODO: CHECK INDEX VALUES TO MAKE SURE THEY ARE WITHIN THE BOUNDS
   mZoneList.push_back(aZone);

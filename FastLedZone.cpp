@@ -27,8 +27,17 @@ FastLedZone::FastLedZone(char*   aZoneName,
     mNumLeds(0),
     mColor(aColor),
     mBrightness(aBrightness),
-    mCurrentEffect(NULL)
+    mEffectSolid(),
+    mEffectTwinkle(),
+    mEffectCylon(),
+    mEffectIndexer(),
+    mEffectList(),
+    mCurrentEffect(&mEffectSolid)
 {
+  mEffectList.push_back(&mEffectSolid);
+  mEffectList.push_back(&mEffectTwinkle);
+  mEffectList.push_back(&mEffectCylon);
+  mEffectList.push_back(&mEffectIndexer);  
 }
 
 // ****************************************************************************
@@ -43,9 +52,29 @@ void FastLedZone::set_leds(CRGB *aLeds, int aNumLeds)
 // ****************************************************************************
 //
 // ****************************************************************************
-void FastLedZone::set_effect(FastLedEffect* aValue) 
+bool FastLedZone::set_effect(const char* aEffectName) 
 { 
-  mCurrentEffect = aValue; 
+  Iterator<FastLedEffect*> lIter = mEffectList.begin();
+
+  while(lIter != NULL)
+  {
+    if(0 == strcmp(aEffectName, (*lIter)->get_effect_name()))
+    {
+      Serial.print(F("Found Effect: "));
+      Serial.println(aEffectName);
+
+      mCurrentEffect = *lIter;
+      mCurrentEffect->reset();
+      return true;
+    }
+
+    lIter++;
+  }
+
+  Serial.print(F("Found NOT Effect: "));
+  Serial.println(aEffectName);
+
+  return false;
 }
 
 // ****************************************************************************
@@ -62,4 +91,33 @@ FastLedEffect* FastLedZone::get_effect()
 void FastLedZone::loop()
 {
   mCurrentEffect->loop(this);
+}
+
+// ****************************************************************************
+//
+// ****************************************************************************
+void FastLedZone::enable_zone()
+{
+  if(NULL != mCurrentEffect)
+    mCurrentEffect->set_enabled(true);
+}
+
+// ****************************************************************************
+//
+// ****************************************************************************
+void FastLedZone::disable_zone()
+{
+  if(NULL != mCurrentEffect)
+    mCurrentEffect->set_enabled(false);
+}
+
+// ****************************************************************************
+//
+// ****************************************************************************
+bool FastLedZone::get_enabled()
+{
+  if(NULL != mCurrentEffect)
+    return mCurrentEffect->get_enabled();
+
+  return false;
 }

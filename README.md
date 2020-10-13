@@ -163,6 +163,7 @@ TODO
 - [X] Upgrade to ArduinoJson 6
 - [X] Add over the air updates
 - [X] Add zones to LEDs to allow different zones to be controlled independently
+- [X] LED zones should have independent effects
 - [ ] Add configruation parameters for Chiller temp and have some kind of indication when outside a particular range (e.g 19C - 24C)
 - [ ] Add notification when Chiller temp approaches dew point (risk of condensation)
 - [ ] Update to have arduino send effect list to be more dynamic

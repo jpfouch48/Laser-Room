@@ -13,6 +13,13 @@
 // ****************************************************************************
 #include "CommonIncludes.h"
 
+#include "FastLedEffectSolid.h"
+#include "FastLedEffectTwinkle.h"
+#include "FastLedEffectCylon.h"
+#include "FastLedEffectIndexer.h"
+
+#include "src/LinkedList.h"
+
 // Forward Declared Classes
 class FastLedEffect;
 
@@ -36,9 +43,12 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  void           set_effect(FastLedEffect* aValue);
+  bool           set_effect(const char *aEffectName);
   FastLedEffect* get_effect();
 
+  void           enable_zone();
+  void           disable_zone();
+  bool           get_enabled();
 
   // **************************************************************************
   //
@@ -93,6 +103,12 @@ private:
   CRGB           mColor;
   uint8_t        mBrightness;
   FastLedEffect* mCurrentEffect;
+
+  FastLedEffectSolid         mEffectSolid;
+  FastLedEffectTwinkle       mEffectTwinkle;
+  FastLedEffectCylon         mEffectCylon;
+  FastLedEffectIndexer       mEffectIndexer;
+  LinkedList<FastLedEffect*> mEffectList;  
 };
 
 #endif

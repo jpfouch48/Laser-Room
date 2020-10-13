@@ -14,11 +14,6 @@
 #include "CommonIncludes.h"
 #include "Configuration.h"
 
-#include "FastLedEffectSolid.h"
-#include "FastLedEffectTwinkle.h"
-#include "FastLedEffectCylon.h"
-#include "FastLedEffectIndexer.h"
-
 #include "src/LinkedList.h"
 
 // Forward Declarations
@@ -134,7 +129,6 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  Iterator<FastLedEffect*> get_effects();
   Iterator<FastLedZone*>   get_zones();
 
   // **************************************************************************
@@ -156,13 +150,6 @@ protected:
 
 private:
   CRGB                       mLeds[RGB_NUM_LEDS];
-
-  FastLedEffectSolid         mEffectSolid;
-  FastLedEffectTwinkle       mEffectTwinkle;
-  FastLedEffectCylon         mEffectCylon;
-  FastLedEffectIndexer       mEffectIndexer;
-
-  LinkedList<FastLedEffect*> mEffectList;
   LinkedList<FastLedZone*>   mZoneList;
 };
 
