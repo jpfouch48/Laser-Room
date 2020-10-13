@@ -27,7 +27,7 @@ class FastLedZone
 {
 public:
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   FastLedZone(char*       aZoneName, 
               int         aStartIndex, 
@@ -37,36 +37,36 @@ public:
               uint8_t     aBrightness);
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   void set_leds(CRGB *aLeds, int aNumLeds);
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   bool set_effect(const char *aEffectName);
   FastLedEffect* get_effect();
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   void enable_zone();
   void disable_zone();
   bool get_enabled();
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   CRGB* get_leds() { return mLeds; }
   int get_num_leds() { return mNumLeds; }
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   char* get_zone_name() { return mZoneName; }
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   CRGB get_color() { return mColor; }
   CRGB get_color_red() { return mColor.r; }
@@ -74,7 +74,7 @@ public:
   CRGB get_color_blue() { return mColor.b; }
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   void set_color(CRGB aValue) { mColor = aValue; }
   void set_color_red(uint8_t aValue) { mColor.r = aValue; }
@@ -82,19 +82,19 @@ public:
   void set_color_blue(uint8_t aValue) { mColor.b = aValue; }
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   uint8_t get_brightness() { return mBrightness; }
   void set_brightness(uint8_t aValue) { mBrightness = aValue; }
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   int get_start_index() { return mStartIndex; }
   int get_end_index() { return mEndIndex; }
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   void loop();
 

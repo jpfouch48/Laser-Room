@@ -40,17 +40,20 @@ public:
   };
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   LaserRoom();
 
   // **************************************************************************
-  //
+  // See implementation file for details
   // **************************************************************************
   void setup();
   void loop();
 
 protected:
+  // **************************************************************************
+  // See implementation file for details
+  // **************************************************************************
   void change_state(LaserRoom::AppState aState);
   bool parse_json(char *aMsgBuffer, char *aZone);
   void publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewPoint);
@@ -59,6 +62,9 @@ protected:
   void publish_status_data();
   void mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength);
 
+  // **************************************************************************
+  // See implementation file for details
+  // **************************************************************************
   void ota_on_start();
   void ota_on_end();
   void ota_on_progress(unsigned int aProgress, unsigned int aTotal);
