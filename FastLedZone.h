@@ -39,56 +39,59 @@ public:
   // **************************************************************************
   //
   // **************************************************************************
-  void           set_leds(CRGB *aLeds, int aNumLeds);
+  void set_leds(CRGB *aLeds, int aNumLeds);
 
   // **************************************************************************
   //
   // **************************************************************************
-  bool           set_effect(const char *aEffectName);
+  bool set_effect(const char *aEffectName);
   FastLedEffect* get_effect();
 
-  void           enable_zone();
-  void           disable_zone();
-  bool           get_enabled();
+  // **************************************************************************
+  //
+  // **************************************************************************
+  void enable_zone();
+  void disable_zone();
+  bool get_enabled();
 
   // **************************************************************************
   //
   // **************************************************************************
-  CRGB*          get_leds()                        { return mLeds;            }
-  int            get_num_leds()                    { return mNumLeds;         }
+  CRGB* get_leds() { return mLeds; }
+  int get_num_leds() { return mNumLeds; }
 
   // **************************************************************************
   //
   // **************************************************************************
-  char*          get_zone_name()                   { return mZoneName;        }
+  char* get_zone_name() { return mZoneName; }
 
   // **************************************************************************
   //
   // **************************************************************************
-  CRGB           get_color()                       { return mColor;           }
-  CRGB           get_color_red()                   { return mColor.r;         }
-  CRGB           get_color_green()                 { return mColor.g;         }
-  CRGB           get_color_blue()                  { return mColor.b;         }
+  CRGB get_color() { return mColor; }
+  CRGB get_color_red() { return mColor.r; }
+  CRGB get_color_green() { return mColor.g; }
+  CRGB get_color_blue() { return mColor.b; }
 
   // **************************************************************************
   //
   // **************************************************************************
-  void           set_color(CRGB aValue)            { mColor = aValue;         }
-  void           set_color_red(uint8_t aValue)     { mColor.r = aValue;       }
-  void           set_color_green(uint8_t aValue)   { mColor.g = aValue;       }
-  void           set_color_blue(uint8_t aValue)    { mColor.b = aValue;       }
+  void set_color(CRGB aValue) { mColor = aValue; }
+  void set_color_red(uint8_t aValue) { mColor.r = aValue; }
+  void set_color_green(uint8_t aValue) { mColor.g = aValue; }
+  void set_color_blue(uint8_t aValue) { mColor.b = aValue; }
 
   // **************************************************************************
   //
   // **************************************************************************
-  uint8_t        get_brightness()                  { return mBrightness;      }
-  void           set_brightness(uint8_t aValue)    { mBrightness = aValue;    }
+  uint8_t get_brightness() { return mBrightness; }
+  void set_brightness(uint8_t aValue) { mBrightness = aValue; }
 
   // **************************************************************************
   //
   // **************************************************************************
-  int            get_start_index()                 { return mStartIndex;      }
-  int            get_end_index()                   { return mEndIndex;        }
+  int get_start_index() { return mStartIndex; }
+  int get_end_index() { return mEndIndex; }
 
   // **************************************************************************
   //
