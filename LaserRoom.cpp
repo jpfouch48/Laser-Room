@@ -17,10 +17,9 @@ LaserRoom::LaserRoom() :
   mWifiClient(),
   mMqttClient(mWifiClient),
   mRgbWrapper(),
-  mZone0("zone0",  0,  9, "solid", CRGB(0,   0,   0  ), 50),
-  mZone1("zone1", 10, 19, "solid", CRGB(0,   0,   255), 50),
-  mZone2("zone2", 20, 29, "solid", CRGB(0,   255, 0  ), 50),
-  mZone3("zone3", 30, 39, "solid", CRGB(255, 0,   0  ), 50),
+  mZone1("zone1",  0,  9, "solid", CRGB(0,   0,   255), 50),
+  mZone2("zone2", 10, 19, "solid", CRGB(0,   255, 0  ), 50),
+  mZone3("zone3", 20, 29, "solid", CRGB(255, 0,   0  ), 50),
   mChangeCount(0),
   mAppState(LaserRoom::AppState::AppState_Init)
 {
@@ -45,33 +44,18 @@ void LaserRoom::change_state(LaserRoom::AppState aState)
 
   if(mAppState == LaserRoom::AppState::AppState_WifiConnecting)
   {
-    mZone0.set_effect("cylon");
-    mZone0.set_color_red(255);
-    mZone0.set_color_green(0);
-    mZone0.set_color_blue(0);
     Serial.println(F("Changing to WifiConnecting state"));
   }
   else if(mAppState == LaserRoom::AppState::AppState_MqttConnecting)
   {
-    mZone0.set_color_red(0);
-    mZone0.set_color_green(255);
-    mZone0.set_color_blue(0);
     Serial.println(F("Changing to MqttConnecting state"));
   }
   else if(mAppState == LaserRoom::AppState::AppState_Running)
   {
-    mZone0.set_effect("solid");
-    mZone0.set_color_red(255);
-    mZone0.set_color_green(255);
-    mZone0.set_color_blue(255);
     Serial.println(F("Changing to Running state"));    
   }
   else if (mAppState == LaserRoom::AppState::AppState_Updating)
   {
-    mZone0.set_effect("cylon");
-    mZone0.set_color_red(0);
-    mZone0.set_color_green(0);
-    mZone0.set_color_blue(255);
     Serial.println(F("Changing to Updating state"));    
   }
   else if(mAppState == LaserRoom::AppState::AppState_Init)

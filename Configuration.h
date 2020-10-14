@@ -19,7 +19,7 @@
 // ****************************************************************************
 // Version Information
 // ****************************************************************************
-#define APP_VERSION          "0.0.10"
+#define APP_VERSION          "0.0.15"
 
 // ****************************************************************************
 // WIFI Defines
@@ -80,7 +80,7 @@
 // ****************************************************************************
 #define RGB_LED_TYPE         WS2812B
 #define RGB_COLOR_ORDER      GRB
-#define RGB_NUM_LEDS         40
+#define RGB_NUM_LEDS         30
 
 // Include a configuration private file to house
 // your private configs you don't want to store in git

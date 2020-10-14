@@ -66,6 +66,15 @@ public:
   // **************************************************************************
   const char*  get_effect_name() { return mEffectName; }
 
+
+
+  // **************************************************************************
+  // See implementation file for details
+  // **************************************************************************
+  void set_brightness(int aBrightness);
+  void fill_solid();
+  void fill_solid_black();
+
 protected:
   // **************************************************************************
   // See implementation file for details
@@ -87,15 +96,13 @@ protected:
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-  void fill_solid();
-  void fill_solid_black();
-  void set_brightness();
-  void set_brightness(int aBrightness);
 
+
+  void set_brightness();
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-  bool fade_out(bool aFirstTimeInState);
+bool fade_out(bool aFirstTimeInState);
   bool fade_in(bool aFirstTimeInState);
 
   bool         mEnabled;

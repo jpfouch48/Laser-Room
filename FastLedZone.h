@@ -85,7 +85,12 @@ public:
   // See implementation file for details
   // **************************************************************************
   uint8_t get_brightness() { return mBrightness; }
-  void set_brightness(uint8_t aValue) { mBrightness = aValue; }
+  void set_brightness(uint8_t aValue) 
+  { 
+    mBrightness = aValue; 
+    if(NULL != mCurrentEffect)
+      mCurrentEffect->set_brightness(); 
+  }
 
   // **************************************************************************
   // See implementation file for details
