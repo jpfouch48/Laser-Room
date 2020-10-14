@@ -27,7 +27,23 @@ class FastLedZone
 {
 public:
   // **************************************************************************
-  // See implementation file for details
+  // FastLedZone - Constructor
+  // **************************************************************************
+  // Arguments
+  //   char*       aZoneName   : Unique name for zone
+  //   int         aStartIndex : Starting led index for zone
+  //   int         aEndIndex   : Ending led index for zone
+  //   const char* aEffectName : Initial effect name for zone
+  //   CRGB        aColor      : Initial color for zone
+  //   uint8_t     aBrightness : Initial brightness for zone
+  // **************************************************************************
+  // Return
+  //   N/A
+  // **************************************************************************
+  // Description:
+  //   Constructor for FastLedZone
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   FastLedZone(char*       aZoneName, 
               int         aStartIndex, 
@@ -37,31 +53,183 @@ public:
               uint8_t     aBrightness);
 
   // **************************************************************************
-  // See implementation file for details
+  // set_led_strip
   // **************************************************************************
-  void set_leds(CRGB *aLeds, int aNumLeds);
+  // Arguments
+  //   CRGB* aLeds    : Pointer to led strip 
+  //   int   aNumLeds : Number of leds in strip
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   Sets the pointer and count for the led strip used. This is the entire
+  //   led strip that this zone will utilize part of.
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
+  void set_led_strip(CRGB* aLeds, int aNumLeds);
 
   // **************************************************************************
-  // See implementation file for details
+  // set_effect
+  // **************************************************************************
+  // Arguments
+  //   char* aEffectName : Name of effect to set
+  // **************************************************************************
+  // Return
+  //   bool - true if effect was set, false if there was an error
+  // **************************************************************************
+  // Description:
+  //   Sets the current effect to be used by this zone.
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   bool set_effect(const char *aEffectName);
+
+  // **************************************************************************
+  // get_effect
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   FastLedEffect* - Pointer the current effect used by this zone
+  // **************************************************************************
+  // Description:
+  //   Returns the current effect pointer used by this zone.
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
   FastLedEffect* get_effect();
 
   // **************************************************************************
-  // See implementation file for details
+  // enable_zone
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   Enables this zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   void enable_zone();
+
+  // **************************************************************************
+  // disable_zone
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   Disables this zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
   void disable_zone();
+
+  // **************************************************************************
+  // get_enabled
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   Bool - true if zone is enabled, false if zone is disabled
+  // **************************************************************************
+  // Description:
+  //   Returns current enabled state of zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
   bool get_enabled();
 
   // **************************************************************************
-  // See implementation file for details
+  // get_strip_leds()
   // **************************************************************************
-  CRGB* get_leds() { return mLeds; }
-  int get_num_leds() { return mNumLeds; }
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   CRGB* - pointer to leds
+  // **************************************************************************
+  // Description:
+  //   Return a pointer to the led strip. Note that this is the
+  //   the entire led strip and not just the leds associated with this zone.
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
+  CRGB* get_strip_leds() { return mStripLeds; }
 
   // **************************************************************************
-  // See implementation file for details
+  // get_strip_count()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   int - total number of leds in the strip
+  // **************************************************************************
+  // Description:
+  //   Return a count to the number of leds in the strip. Note that this is 
+  //   the the entire led strip and not just the leds associated with this 
+  //   zone.
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
+  int get_strip_count() { return mStripCount; }
+
+  // **************************************************************************
+  // get_zone_leds()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   CRGB* - pointer to zone leds
+  // **************************************************************************
+  // Description:
+  //   Return a pointer to the zone led start position.
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
+  CRGB* get_zone_leds() { return &mStripLeds[mStartIndex]; }
+
+  // **************************************************************************
+  // get_zone_count()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   int - total number of leds in the zone
+  // **************************************************************************
+  // Description:
+  //   Return a count to the number of leds in the zone. 
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
+  int get_zone_count() { return (mEndIndex - mStartIndex)+1; }
+
+  // **************************************************************************
+  // get_zone_name()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   char* - Unique name of zone
+  // **************************************************************************
+  // Description:
+  //   Returns the unique name for this zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   char* get_zone_name() { return mZoneName; }
 
@@ -89,7 +257,7 @@ public:
   { 
     mBrightness = aValue; 
     if(NULL != mCurrentEffect)
-      mCurrentEffect->set_brightness(); 
+      mCurrentEffect->set_brightness(mBrightness); 
   }
 
   // **************************************************************************
@@ -105,8 +273,8 @@ public:
 
 private:
   char*          mZoneName;
-  CRGB*          mLeds;
-  int            mNumLeds;
+  CRGB*          mStripLeds;
+  int            mStripCount;
   int            mStartIndex;
   int            mEndIndex;
   CRGB           mColor;

@@ -68,8 +68,8 @@ bool FastLedEffectTwinkle::process(bool aFirstTimeInState)
     fill_solid_black();
 
     for(int lIndex = 0; lIndex < mCount; lIndex++)
-      mZone->get_leds()[random(mZone->get_start_index(), 
-                               mZone->get_end_index())] = mZone->get_color();
+      mZone->get_zone_leds()[random(0, mZone->get_zone_count()-1)] = 
+        mZone->get_color();
   }
   return false; 
 }

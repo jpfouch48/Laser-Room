@@ -74,10 +74,10 @@ bool FastLedEffectCylon::process(bool aFirstTimeInState)
   {
     if(mInc == 1)
     {
-      if(mIndex >= mZone->get_end_index() + 1 || mIndex == -1)
+      if(mIndex >= mZone->get_zone_count() || mIndex == -1)
       {
         delay(mReturnDelay); // TODO: GET RID OF THIS
-        mIndex = mZone->get_end_index() + 1;
+        mIndex = mZone->get_zone_count();
         mInc = -1;          
       }
       else
@@ -86,26 +86,26 @@ bool FastLedEffectCylon::process(bool aFirstTimeInState)
 
         for(int lIndex = 0; lIndex < mSize; lIndex++)
         {
-          int lPixel = mZone->get_start_index() - (mIndex + lIndex);            
+          int lPixel = (mIndex + lIndex);            
           CRGB lColor = mZone->get_color();
           if(lIndex == 0 || lIndex == (mSize - 1))
             lColor = CRGB(mZone->get_color().r/10, 
                           mZone->get_color().g/10, 
                           mZone->get_color().b/10);
 
-          if(lPixel >= mZone->get_start_index() && 
-             lPixel <= mZone->get_end_index())
-            mZone->get_leds()[lPixel] = lColor;
+          if((lPixel >= 0) && (lPixel < mZone->get_zone_count()))
+            mZone->get_zone_leds()[lPixel] = lColor;
         }
+
         mIndex++;          
       }       
     }
     else
     {
-      if(mIndex <= mZone->get_start_index() - mSize)
+      if(mIndex <= (-mSize))
       {
         delay(mReturnDelay); // TODO: GET RID OF THIS
-        mIndex = mZone->get_start_index() - mSize;
+        mIndex = 0 - mSize;
         mInc = 1;          
       }
       else
@@ -114,17 +114,17 @@ bool FastLedEffectCylon::process(bool aFirstTimeInState)
 
         for(int lIndex = mSize - 1; lIndex >= 0; lIndex--)
         {
-          int lPixel = mZone->get_end_index() + (mIndex - lIndex);            
+          int lPixel = mZone->get_zone_count() + (mIndex - lIndex);            
           CRGB lColor = mZone->get_color();
           if(lIndex == 0 || lIndex == (mSize - 1))
             lColor = CRGB(mZone->get_color().r/10, 
                           mZone->get_color().g/10, 
                           mZone->get_color().b/10);
 
-          if(lPixel >= mZone->get_start_index() && 
-             lPixel <= mZone->get_end_index())
-            mZone->get_leds()[lPixel] = lColor;
+          if((lPixel >= 0) && (lPixel < mZone->get_zone_count()))
+            mZone->get_zone_leds()[lPixel] = lColor;
         }
+        
         mIndex--;
       }               
     }

@@ -45,7 +45,7 @@ FastLedEffectIndexer::FastLedEffectIndexer(FastLedZone *aZone) :
 // ****************************************************************************
 bool FastLedEffectIndexer::init(bool aFirstTimeInState)
 { 
-  mIndex = mZone->get_start_index();
+  mIndex = 0;
   fill_solid_black();
   set_brightness();
   return true; 
@@ -67,14 +67,16 @@ bool FastLedEffectIndexer::process(bool aFirstTimeInState)
 {
   EVERY_N_MILLISECONDS(mDelay)     
   {
-    if(mIndex > mZone->get_end_index() || mIndex == -1)
-      mIndex = mZone->get_start_index();
+    if(mIndex > mZone->get_zone_count() || mIndex == -1)
+      mIndex = 0;
       
     fill_solid_black();
-    mZone->get_leds()[mIndex] = mZone->get_color();
+    mZone->get_zone_leds()[mIndex] = mZone->get_color();
 
     Serial.print(F("Indexer: "));
-    Serial.println(mIndex);
+    Serial.print(mIndex);
+    Serial.print(F(" - "));
+    Serial.println(mIndex + mZone->get_start_index());
 
     mIndex++;
   }

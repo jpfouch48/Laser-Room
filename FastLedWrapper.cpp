@@ -534,7 +534,7 @@ Iterator<FastLedZone*> FastLedWrapper::get_zones()
 // ****************************************************************************
 bool FastLedWrapper::add_zone(FastLedZone *aZone)
 {
-  aZone->set_leds(mLeds, RGB_NUM_LEDS);
+  aZone->set_led_strip(mLeds, RGB_NUM_LEDS);
   
   // TODO: CHECK INDEX VALUES TO MAKE SURE THEY ARE WITHIN THE BOUNDS
   mZoneList.push_back(aZone);

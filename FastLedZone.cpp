@@ -34,8 +34,8 @@ FastLedZone::FastLedZone(
     mZoneName(aZoneName),
     mStartIndex(aStartIndex), 
     mEndIndex(aEndIndex),
-    mLeds(NULL),
-    mNumLeds(0),
+    mStripLeds(NULL),
+    mStripCount(0),
     mColor(aColor),
     mBrightness(aBrightness),
     mEffectSolid(this),
@@ -65,10 +65,10 @@ FastLedZone::FastLedZone(
 // Notes:
 //
 // ****************************************************************************
-void FastLedZone::set_leds(CRGB *aLeds, int aNumLeds)         
+void FastLedZone::set_led_strip(CRGB *aStripLeds, int aStripCount)         
 { 
-  mLeds = aLeds; 
-  mNumLeds = mNumLeds; 
+  mStripLeds = aStripLeds; 
+  mStripCount = aStripCount; 
 }
 
 // ****************************************************************************

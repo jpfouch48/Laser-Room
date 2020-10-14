@@ -195,10 +195,10 @@ void FastLedEffect::set_enabled(bool aValue)
 // ****************************************************************************
 void FastLedEffect::fill_solid()
 {
-    for(int lIndex = mZone->get_start_index(); 
-            lIndex <= mZone->get_end_index(); 
+    for(int lIndex = 0; 
+            lIndex < mZone->get_zone_count(); 
             lIndex++)
-      mZone->get_leds()[lIndex] = mZone->get_color();
+      mZone->get_zone_leds()[lIndex] = mZone->get_color();
 }
 
 // ****************************************************************************
@@ -215,10 +215,10 @@ void FastLedEffect::fill_solid()
 // ****************************************************************************
 void FastLedEffect::fill_solid_black()
 {
-    for(int lIndex = mZone->get_start_index(); 
-            lIndex <= mZone->get_end_index(); 
+    for(int lIndex = 0; 
+            lIndex < mZone->get_zone_count(); 
             lIndex++)
-      mZone->get_leds()[lIndex] = CRGB::Black;
+      mZone->get_zone_leds()[lIndex] = CRGB::Black;
 }
 
 // ****************************************************************************
@@ -235,10 +235,10 @@ void FastLedEffect::fill_solid_black()
 // ****************************************************************************
 void FastLedEffect::set_brightness()
 {
-    for(int lIndex = mZone->get_start_index(); 
-            lIndex <= mZone->get_end_index(); 
+    for(int lIndex = 0; 
+            lIndex < mZone->get_zone_count(); 
             lIndex++)
-      mZone->get_leds()[lIndex] = 
+      mZone->get_zone_leds()[lIndex] = 
         blend(CRGB::Black, mZone->get_color(), mZone->get_brightness());
 }
 
@@ -256,10 +256,10 @@ void FastLedEffect::set_brightness()
 // ****************************************************************************
 void FastLedEffect::set_brightness(int aBrightness)
 {
-    for(int lIndex = mZone->get_start_index(); 
-            lIndex <= mZone->get_end_index(); 
+    for(int lIndex = 0; 
+            lIndex < mZone->get_zone_count(); 
             lIndex++)
-      mZone->get_leds()[lIndex] = 
+      mZone->get_zone_leds()[lIndex] = 
         blend(CRGB::Black, mZone->get_color(), aBrightness);
 }
 
