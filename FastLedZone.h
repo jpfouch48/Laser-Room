@@ -234,25 +234,108 @@ public:
   char* get_zone_name() { return mZoneName; }
 
   // **************************************************************************
-  // See implementation file for details
+  // get_color()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   CRGB - current set color
+  // **************************************************************************
+  // Description:
+  //   Returns the current color set by zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   CRGB get_color() { return mColor; }
-  CRGB get_color_red() { return mColor.r; }
-  CRGB get_color_green() { return mColor.g; }
-  CRGB get_color_blue() { return mColor.b; }
 
   // **************************************************************************
-  // See implementation file for details
+  // get_color_red()
+  // get_color_green()
+  // get_color_blue()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   uint8_t - Current color value for (red, green or blue channel)
+  // **************************************************************************
+  // Description:
+  //   Returns the current color set by zone (red, green or blue channel)
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
+  uint8_t get_color_red()   { return mColor.r; }
+  uint8_t get_color_green() { return mColor.g; }
+  uint8_t get_color_blue()  { return mColor.b; }
+
+  // **************************************************************************
+  // set_color()
+  // **************************************************************************
+  // Arguments
+  //   CRGB aValue : RGB color structure to set as current
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   Sets the current color for the zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   void set_color(CRGB aValue) { mColor = aValue; }
+
+  // **************************************************************************
+  // set_color_red()
+  // set_color_green()
+  // set_color_blue()
+  // **************************************************************************
+  // Arguments
+  //   uint8_t aValue : Current red, green or blue channel to set for this
+  //     zone
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   Sets the current color channel for the zone (red, green or blue)
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
   void set_color_red(uint8_t aValue) { mColor.r = aValue; }
   void set_color_green(uint8_t aValue) { mColor.g = aValue; }
   void set_color_blue(uint8_t aValue) { mColor.b = aValue; }
 
   // **************************************************************************
-  // See implementation file for details
+  // get_brightness()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   uint8_t - Current brightness level
+  // **************************************************************************
+  // Description:
+  //   Returns the current brightness level for this zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   uint8_t get_brightness() { return mBrightness; }
+
+  // **************************************************************************
+  // set_brightness()
+  // **************************************************************************
+  // Arguments
+  //   uint8_t aValue : Brightness level to set
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   Sets the current brightness level for this zone
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
   void set_brightness(uint8_t aValue) 
   { 
     mBrightness = aValue; 
@@ -261,13 +344,53 @@ public:
   }
 
   // **************************************************************************
-  // See implementation file for details
+  // get_start_index()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   int - Start index for this zone (based on entire led strip)
+  // **************************************************************************
+  // Description:
+  //   Gets the start index for this zone. Note that this index is based
+  //   based on the entire led strip.
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   int get_start_index() { return mStartIndex; }
+
+  // **************************************************************************
+  // get_end_index()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   int - End index for this zone (based on entire led strip)
+  // **************************************************************************
+  // Description:
+  //   Gets the end index for this zone. Note that this index is based
+  //   based on the entire led strip.
+  // **************************************************************************
+  // **               See implementation file for more details               **
+  // **************************************************************************
   int get_end_index() { return mEndIndex; }
 
   // **************************************************************************
-  // See implementation file for details
+  // loop()
+  // **************************************************************************
+  // Arguments
+  //   None
+  // **************************************************************************
+  // Return
+  //   None
+  // **************************************************************************
+  // Description:
+  //   This function is the process loop for the zone. Any processing done on
+  //   the main processing loop will be done here.
+  // **************************************************************************
+  // **               See implementation file for more details               **
   // **************************************************************************
   void loop();
 

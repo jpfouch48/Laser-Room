@@ -13,16 +13,19 @@
 #include "FastLedEffect.h"
 
 // ****************************************************************************
-// Function:
+// FastLedZone() - Constructor
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Constructor for FastLedZone Class. The following is performed:
+//     - Init all variables to know state
+//     - Populate Effect list with available effects
+//     - Set the current effect based on passed in effect name
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 FastLedZone::FastLedZone(
             char*       aZoneName, 
@@ -54,16 +57,16 @@ FastLedZone::FastLedZone(
 }
 
 // ****************************************************************************
-// Function:
+// set_led_strip()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Initizlizes the Led strip pointers based on the passed in arguments.
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 void FastLedZone::set_led_strip(CRGB *aStripLeds, int aStripCount)         
 { 
@@ -72,16 +75,19 @@ void FastLedZone::set_led_strip(CRGB *aStripLeds, int aStripCount)
 }
 
 // ****************************************************************************
-// Function:
+// set_effect()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Sets the current effect based on passed in effect name.
+//    - Loop through the list of effects
+//    - If effect name is found, current effect is set and true is returned
+//    - If no effect is found, false is returned
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 bool FastLedZone::set_effect(const char* aEffectName) 
 { 
@@ -109,16 +115,16 @@ bool FastLedZone::set_effect(const char* aEffectName)
 }
 
 // ****************************************************************************
-// Function:
+// get_effect()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Returns the current effect pointer
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 FastLedEffect* FastLedZone::get_effect()
 {
@@ -126,33 +132,34 @@ FastLedEffect* FastLedZone::get_effect()
 }
 
 // ****************************************************************************
-// Function:
+// loop()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Calls the loop processing of the current effect for this zone
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 void FastLedZone::loop()
 {
-  mCurrentEffect->loop();
+  if(NULL != mCurrentEffect)
+    mCurrentEffect->loop();
 }
 
 // ****************************************************************************
-// Function:
+// enable_zone()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Enables the current effect of this zone
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 void FastLedZone::enable_zone()
 {
@@ -161,16 +168,16 @@ void FastLedZone::enable_zone()
 }
 
 // ****************************************************************************
-// Function:
+// disable_zone()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Disables the current effect of this zone
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 void FastLedZone::disable_zone()
 {
@@ -179,16 +186,17 @@ void FastLedZone::disable_zone()
 }
 
 // ****************************************************************************
-// Function:
+// get_enabled()
 // ****************************************************************************
-// Arguments:
-//
+// Arguments - See header file for details
+// ****************************************************************************
+// Return - See header file for details
 // ****************************************************************************
 // Description:
-//
+//   Returns the current enabled state of the effect for this zone. If no
+//   effect is set (NULL), false is returned.
 // ****************************************************************************
-// Notes:
-//
+// **                    See header file for more details                    **
 // ****************************************************************************
 bool FastLedZone::get_enabled()
 {
