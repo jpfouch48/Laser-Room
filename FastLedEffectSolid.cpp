@@ -25,7 +25,7 @@
 //
 // ****************************************************************************
 FastLedEffectSolid::FastLedEffectSolid(FastLedZone *aZone) : 
-  FastLedEffect("solid", aZone)
+  FastLedEffect("solid", aZone, 1000)
 { 
 }
 

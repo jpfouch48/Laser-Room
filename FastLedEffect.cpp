@@ -24,11 +24,11 @@
 // Notes:
 //
 // ****************************************************************************
-FastLedEffect::FastLedEffect(char *aEffectName, FastLedZone *aZone) : 
+FastLedEffect::FastLedEffect(char *aEffectName, FastLedZone *aZone, int aEffectDelay) : 
     mEffectName(aEffectName),
     mEnabled(true),
     mZone(aZone),
-    mDelay(1000),
+    mDelay(aEffectDelay),
     mFirstTimeInState(true),
     mFadeBrightness(-1),
     mFadeDelay(10)

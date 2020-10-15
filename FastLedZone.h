@@ -17,6 +17,7 @@
 #include "FastLedEffectTwinkle.h"
 #include "FastLedEffectCylon.h"
 #include "FastLedEffectIndexer.h"
+#include "FastLedEffectFire.h"
 
 #include "src/LinkedList.h"
 
@@ -408,6 +409,7 @@ private:
   FastLedEffectTwinkle       mEffectTwinkle;
   FastLedEffectCylon         mEffectCylon;
   FastLedEffectIndexer       mEffectIndexer;
+  FastLedEffectFire          mEffectFire;
   LinkedList<FastLedEffect*> mEffectList;  
 };
 

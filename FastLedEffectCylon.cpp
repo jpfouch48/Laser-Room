@@ -25,9 +25,8 @@
 //
 // ****************************************************************************
 FastLedEffectCylon::FastLedEffectCylon(FastLedZone *aZone) : 
-  FastLedEffect("cylon", aZone),
+  FastLedEffect("cylon", aZone, 10),
   mReturnDelay(50),
-  mDelay(10),    
   mSize(4),
   mInc(1),
   mIndex(-1)

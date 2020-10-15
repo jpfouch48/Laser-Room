@@ -45,6 +45,7 @@ FastLedZone::FastLedZone(
     mEffectTwinkle(this),
     mEffectCylon(this),
     mEffectIndexer(this),
+    mEffectFire(this),
     mEffectList(),
     mCurrentEffect(NULL)
 {
@@ -52,6 +53,7 @@ FastLedZone::FastLedZone(
   mEffectList.push_back(&mEffectTwinkle);
   mEffectList.push_back(&mEffectCylon);
   mEffectList.push_back(&mEffectIndexer);  
+  mEffectList.push_back(&mEffectFire);    
 
   set_effect(aEffectName);
 }

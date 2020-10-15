@@ -25,8 +25,7 @@
 //
 // ****************************************************************************
 FastLedEffectIndexer::FastLedEffectIndexer(FastLedZone *aZone) : 
-  FastLedEffect("indexer", aZone),
-  mDelay(2000),    
+  FastLedEffect("indexer", aZone, 2000),
   mIndex(-1)
 { 
 }

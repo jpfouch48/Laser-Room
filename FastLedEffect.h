@@ -34,7 +34,7 @@ public:
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-  FastLedEffect(char *aEffectName, FastLedZone *aZone);
+  FastLedEffect(char *aEffectName, FastLedZone *aZone, int aEffectDelay);
 
   // **************************************************************************
   // See implementation file for details
