@@ -31,6 +31,8 @@ public:
   virtual bool process(bool aFirstTimeInState);
 
 private:
+  void display_cylon();
+
   int mReturnDelay;
   int mDelay;
   int mSize;
