@@ -49,6 +49,8 @@ FastLedZone::FastLedZone(
     mEffectList(),
     mCurrentEffect(NULL)
 {
+  mLog = LogWrapper::get_instance();
+
   mEffectList.push_back(&mEffectSolid);
   mEffectList.push_back(&mEffectTwinkle);
   mEffectList.push_back(&mEffectCylon);
@@ -99,8 +101,7 @@ bool FastLedZone::set_effect(const char* aEffectName)
   {
     if(0 == strcmp(aEffectName, (*lIter)->get_effect_name()))
     {
-      Serial.print(F("Found Effect: "));
-      Serial.println(aEffectName);
+      mLog->log("Found Effect: %s\r\n", aEffectName);
 
       mCurrentEffect = *lIter;
       mCurrentEffect->reset();
@@ -110,8 +111,7 @@ bool FastLedZone::set_effect(const char* aEffectName)
     lIter++;
   }
 
-  Serial.print(F("Found NOT Effect: "));
-  Serial.println(aEffectName);
+  mLog->log("Effect NOT Found: %s\r\n", aEffectName);
 
   return false;
 }

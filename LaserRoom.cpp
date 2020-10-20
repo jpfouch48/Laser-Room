@@ -23,6 +23,7 @@ LaserRoom::LaserRoom() :
   mChangeCount(0),
   mAppState(LaserRoom::AppState::AppState_Init)
 {
+  mLog = LogWrapper::get_instance();
 }
 
 // ****************************************************************************
@@ -44,23 +45,23 @@ void LaserRoom::change_state(LaserRoom::AppState aState)
 
   if(mAppState == LaserRoom::AppState::AppState_WifiConnecting)
   {
-    Serial.println(F("Changing to WifiConnecting state"));
+    mLog->log("Changing to WifiConnecting state\r\n");
   }
   else if(mAppState == LaserRoom::AppState::AppState_MqttConnecting)
   {
-    Serial.println(F("Changing to MqttConnecting state"));
+    mLog->log("Changing to MqttConnecting state\r\n");
   }
   else if(mAppState == LaserRoom::AppState::AppState_Running)
   {
-    Serial.println(F("Changing to Running state"));    
+    mLog->log("Changing to Running state\r\n");    
   }
   else if (mAppState == LaserRoom::AppState::AppState_Updating)
   {
-    Serial.println(F("Changing to Updating state"));    
+    mLog->log("Changing to Updating state\r\n");    
   }
   else if(mAppState == LaserRoom::AppState::AppState_Init)
   {
-    Serial.println(F("Changing to Updating init"));    
+    mLog->log("Changing to Updating init\r\n");    
   }
 }
 
@@ -99,16 +100,23 @@ void LaserRoom::setup()
   delay(10);
   WiFi.begin(WIFI_SSID, WIFI_SSID_PW);
 
-  Serial.print(F("Connecting to "));
-  Serial.println(WIFI_SSID);
+  mLog->log("Connecting to %s\r\n", WIFI_SSID);
 
 #ifndef DISABLE_OTA
   ArduinoOTA.setHostname(OTA_HOSTNAME);
   ArduinoOTA.setPassword(OTA_PW);  
   ArduinoOTA.onStart([this]() { this->ota_on_start(); });
   ArduinoOTA.onEnd([this]()   { this->ota_on_end();   });  
-  ArduinoOTA.onProgress([this](unsigned int aProgress, unsigned int aTotal) { this->ota_on_progress(aProgress, aTotal); });
-  ArduinoOTA.onError([this](ota_error_t aError) { this->ota_on_error(aError); });
+  
+  ArduinoOTA.onProgress([this](unsigned int aProgress, unsigned int aTotal) 
+  { 
+    this->ota_on_progress(aProgress, aTotal); 
+  });
+  
+  ArduinoOTA.onError([this](ota_error_t aError) 
+  { 
+    this->ota_on_error(aError); 
+  });
 #endif
 
 #endif
@@ -143,10 +151,7 @@ void LaserRoom::loop()
           WiFi.localIP()[2], 
           WiFi.localIP()[3]);
 
-        Serial.print(F("WIFI Connected to "));
-        Serial.println(WIFI_SSID);
-        Serial.print(F("IP address: "));
-        Serial.println(WiFi.localIP());
+        mLog->log("WIFI Connected to %s - %s", WIFI_SSID, mIpAddress);
 
 #ifndef DISABLE-MQTT
         mMqttClient.setServer(MQTT_SERVER_IP, MQTT_SERVER_PORT);  
@@ -158,23 +163,21 @@ void LaserRoom::loop()
 
 #ifndef DISABLE_OTA
         ArduinoOTA.begin();
-        Serial.println(F("OTA ready"));  
+        mLog->log("OTA ready\r\n");  
 #endif
         change_state(LaserRoom::AppState::AppState_MqttConnecting);
       }
       else
       {
-        Serial.print(F("Connecting to "));
-        Serial.println(WIFI_SSID);
+        mLog->log("Connecting to %s\r\n", WIFI_SSID);
       }
-    }
 #else
-
-    // Throttle state transiton when WIFI is disabled to better
-    // debug state transitions
-    EVERY_N_MILLISECONDS(1000) { mChangeCount++; }
-    if(gChangeCount >= 5) change_state(LaserRoom::AppState::AppState_MqttConnecting);
+      // Throttle state transiton when WIFI is disabled to better
+      // debug state transitions
+      mChangeCount++;
+      if(mChangeCount >= 5) change_state(LaserRoom::AppState::AppState_MqttConnecting);
 #endif
+    }
   }
   else if(mAppState == LaserRoom::AppState::AppState_MqttConnecting)
   {
@@ -183,11 +186,11 @@ void LaserRoom::loop()
 #ifndef DISABLE_MQTT      
       if (!mMqttClient.connected()) 
       {
-        Serial.println(F("Connecting to MQTT"));
+        mLog->log("Connecting to MQTT\r\n");
 
         if (mMqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_USER_PW)) 
         {          
-          Serial.println(F("Connected to MQTT"));
+          mLog->log("Connected to MQTT\r\n");
           change_state(LaserRoom::AppState::AppState_Running);
 
           Iterator<FastLedZone*> lIter = mRgbWrapper.get_zones();
@@ -197,8 +200,7 @@ void LaserRoom::loop()
             sprintf(lStateSetTopic, MQTT_LED_SENSOR_ZONE_SET_TOPIC, (*lIter)->get_zone_name());          
             mMqttClient.subscribe(lStateSetTopic);
 
-            Serial.print("Subscribing to: ");
-            Serial.println(lStateSetTopic);
+            mLog->log("Subscribing to: %s", lStateSetTopic);
             
             publish_led_data((*lIter)->get_zone_name());
             lIter++;
@@ -208,24 +210,22 @@ void LaserRoom::loop()
         }
         else 
         {
-          Serial.print(F("failed, rc="));
-          Serial.print(mMqttClient.state());
-          Serial.println(F(" try again in 10 seconds"));
+          mLog->log("failed, rc=%d retrying in 10 seconds\r\n", mMqttClient.state());
           yield();  
         }
       }
       else
       {
          change_state(LaserRoom::AppState::AppState_Running);
-      }      
-    }
+      }     
+    } 
 #else
+      // Throttle state transiton when WIFI is disabled to better
+      // debug state transitions
+      mChangeCount++;
+      if(mChangeCount >= 1) change_state(LaserRoom::AppState::AppState_Running);
     }
-    // Throttle state transiton when WIFI is disabled to better
-    // debug state transitions
-    EVERY_N_MILLISECONDS(1000) { mChangeCount++; }
-    if(gChangeCount >= 5) change_state(LaserRoom::AppState::AppState_Running);
-#endif    
+#endif
   }
   else if(mAppState == LaserRoom::AppState::AppState_Running)
   {
@@ -245,11 +245,15 @@ void LaserRoom::loop()
 
       EVERY_N_MILLISECONDS(5000)     
       {
-
+        
         // Chiller temp processing
         if(true == mChillerTemp.loop())
         {
           publish_chiller_temp_data(mChillerTemp.get_sz_temp());
+        }
+        else
+        {
+          mLog->log("Invalid temp returned for Chiller temp sensor\r\n");
         }
 
         // Room Temp Processing
@@ -258,6 +262,10 @@ void LaserRoom::loop()
           publish_room_temp_data(mDHTRoomTemp.get_sz_temp(), 
                                  mDHTRoomTemp.get_sz_humidity(), 
                                  mDHTRoomTemp.get_sz_dew_point());
+        }
+        else
+        {
+          mLog->log("Invalid temp returned for Room temp sensor\r\n");
         }
       }
     }
@@ -299,8 +307,7 @@ bool LaserRoom::parse_json(char *aMsgBuffer, char *aZone)
 
   if(error)
   {
-    Serial.print(F("parse_json: deserializeJson failed -  "));
-    Serial.println(error.c_str());
+    mLog->log("parse_json: deserializeJson failed - %s\r\n", error.c_str());
     return false;
   }
 
@@ -371,8 +378,7 @@ void LaserRoom::publish_room_temp_data(char *aTemp, char *aHumidity, char *aDewP
   lJsonBuffer["dewpoint"]    = aDewPoint;
   serializeJson(lJsonBuffer, lSzBuffer);
  
-  Serial.print(F("Room Temp Message: "));
-  Serial.println(lSzBuffer);
+  mLog->log("Room Temp Message: %s\r\n", lSzBuffer);
 
 #ifndef DISABLE_MQTT  
   if(mAppState == LaserRoom::AppState::AppState_Running)
@@ -403,8 +409,7 @@ void LaserRoom::publish_chiller_temp_data(char *aTemp)
   lJsonBuffer["temperature"] = aTemp;
   serializeJson(lJsonBuffer, lSzBuffer);
   
-  Serial.print(F("Chiller Temp Message: "));
-  Serial.println(lSzBuffer);
+  mLog->log("Chiller Temp Message: %s\r\n", lSzBuffer);
 
 #ifndef DISABLE_MQTT  
   if(mAppState == LaserRoom::AppState::AppState_Running)
@@ -449,15 +454,13 @@ void LaserRoom::publish_led_data(char *aZone)
 
   serializeJson(lJsonBuffer, lSzBuffer);
     
-  Serial.print(F("Led Message: "));
-  Serial.println(lSzBuffer);
+  mLog->log("Led Message: %s\r\n", lSzBuffer);
 
 #ifndef DISABLE_MQTT  
   char lStateTopic[50];
   sprintf(lStateTopic, MQTT_LED_SENSOR_ZONE_STATE_TOPIC, aZone);
 
-  Serial.print(F("Publising Led to State Topic: "));
-  Serial.println(lStateTopic);
+  mLog->log("Publising Led to State Topic: %s\r\n", lStateTopic);
   
   if(mAppState == LaserRoom::AppState::AppState_Running)
     mMqttClient.publish(lStateTopic, lSzBuffer, true);
@@ -489,8 +492,7 @@ void LaserRoom::publish_status_data()
   lJsonBuffer["ip"]      = mIpAddress;
   serializeJson(lJsonBuffer, lSzBuffer);
  
-  Serial.print(F("Status Message: "));
-  Serial.println(lSzBuffer);
+  mLog->log("Status Message: %s\r\n", lSzBuffer);
 
 #ifndef DISABLE_MQTT
   if(mAppState == LaserRoom::AppState::AppState_Running)
@@ -514,37 +516,32 @@ void LaserRoom::publish_status_data()
 // ****************************************************************************
 void LaserRoom::mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength) 
 {
-  Serial.print(F("mqtt_callback - "));
-  Serial.print(F("Topic: "));
-  Serial.println(aTopic);
+  mLog->log("mqtt_callback - Topic: %s\r\n", aTopic);
 
   // Parse zone info from topic
   char lZone[15];  
   if(0 == sscanf(aTopic, MQTT_LED_SENSOR_ZONE_SET_TOPIC, lZone))
   {
-    Serial.println(F("Invalid Zone in topic"));
+    mLog->log("Invalid Zone in topic %s\r\n", aTopic);
     return;
   }
 
   char *lSep = strchr(lZone, '/');
   if(NULL != lSep) lSep[0] = '\0';
 
-  Serial.print(F("mqtt_callback - "));
-  Serial.print(F("Zone: "));
-  Serial.println(lZone);
+  mLog->log("mqtt_callback - Zone: %s\r\n", lZone);
 
   if(aLength > MQTT_BUFFER_WIDTH)
   {
     // TODO: LOG AN ERROR - MESSAGE IS TO LARGE FOR BUFFER
-    Serial.println(F("mqtt_callback - Payload to large"));
+    mLog->log("mqtt_callback - Payload to large %d\r\n", aLength);
   }
   else
   {
     memcpy(mMqttBuffer, aPayload, aLength);
     mMqttBuffer[aLength] = '\0';
 
-    Serial.print(F("  Payload: "));
-    Serial.println(mMqttBuffer);
+    mLog->log("  Payload: %s\r\n", mMqttBuffer);
 
     parse_json(mMqttBuffer, lZone);
   }
@@ -564,7 +561,7 @@ void LaserRoom::mqtt_callback(char* aTopic, byte* aPayload, unsigned int aLength
 // ****************************************************************************
 void LaserRoom::ota_on_start()
 {
-  Serial.println(F("OTA Start")); 
+  mLog->log("OTA Start\r\n"); 
   this->change_state(LaserRoom::AppState::AppState_Updating);    
 }
 
@@ -582,7 +579,7 @@ void LaserRoom::ota_on_start()
 // ****************************************************************************
 void LaserRoom::ota_on_end()
 {
-  Serial.println(F("OTA Complete")); 
+  mLog->log("OTA Complete\r\n"); 
   this->change_state(LaserRoom::AppState::AppState_Running);    
 }
 
@@ -602,7 +599,7 @@ void LaserRoom::ota_on_progress(unsigned int aProgress, unsigned int aTotal)
 {
   EVERY_N_MILLISECONDS(1000)     
   {
-    Serial.printf("Progress: %u%%\r", (aProgress / (aTotal / 100)));
+    mLog->log("Progress: %u%%\r\n", (aProgress / (aTotal / 100)));
   }
 }
 
@@ -620,10 +617,10 @@ void LaserRoom::ota_on_progress(unsigned int aProgress, unsigned int aTotal)
 // ****************************************************************************
 void LaserRoom::ota_on_error(ota_error_t error)
 {
-  Serial.printf("OTA Error[%u]: ", error);
-  if (error == OTA_AUTH_ERROR)         Serial.println(F("Auth Failed"));
-  else if (error == OTA_BEGIN_ERROR)   Serial.println(F("Begin Failed"));
-  else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
-  else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
-  else if (error == OTA_END_ERROR)     Serial.println(F("End Failed"));
+  mLog->log("OTA Error[%u]: ", error);
+  if (error == OTA_AUTH_ERROR)         mLog->log("Auth Failed\r\n");
+  else if (error == OTA_BEGIN_ERROR)   mLog->log("Begin Failed\r\n");
+  else if (error == OTA_CONNECT_ERROR) mLog->log("Connect Failed\r\n");
+  else if (error == OTA_RECEIVE_ERROR) mLog->log("Receive Failed\r\n");
+  else if (error == OTA_END_ERROR)     mLog->log("End Failed\r\n");
 }

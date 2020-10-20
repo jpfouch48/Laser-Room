@@ -52,6 +52,13 @@ char* DallasTempWrapper::get_sz_temp()
 bool DallasTempWrapper::loop()
 {
   mDallasTemp.requestTemperatures();
+
+  if(get_temp() > 257 || get_temp() < -67)
+  {
+    return false;
+  }
+
   dtostrf(get_temp(), 7, 3, mSzTemp);
+
   return true;
 }

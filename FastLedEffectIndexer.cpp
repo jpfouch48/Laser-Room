@@ -72,10 +72,7 @@ bool FastLedEffectIndexer::process(bool aFirstTimeInState)
     fill_solid_black();
     mZone->get_zone_leds()[mIndex] = mZone->get_color();
 
-    Serial.print(F("Indexer: "));
-    Serial.print(mIndex);
-    Serial.print(F(" - "));
-    Serial.println(mIndex + mZone->get_start_index());
+    mLog->log("Indexer: %d - %d\r\n", mIndex, mIndex + mZone->get_start_index());
 
     mIndex++;
   }

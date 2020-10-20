@@ -48,6 +48,15 @@ bool DHTWrapper::loop()
   if(millis() - mTimeStamp > mDht.getMinimumSamplingPeriod())
   {
     mTempAndHumidity = mDht.getTempAndHumidity();
+
+    if(isnan(mTempAndHumidity.humidity) || 
+       isnan(mTempAndHumidity.temperature))
+    {
+      mTempAndHumidity.humidity = 0;
+      mTempAndHumidity.temperature = 0;
+      return false;
+    }
+
     dtostrf(get_temp(),      7, 3, mSzTemp);
     dtostrf(get_humidity(),  7, 3, mSzHumidity);
     dtostrf(get_dew_point(), 7, 3, mSzDewPoint);

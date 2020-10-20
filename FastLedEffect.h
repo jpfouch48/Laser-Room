@@ -12,6 +12,7 @@
 //
 // ****************************************************************************
 #include "CommonIncludes.h"
+#include "src/LogWrapper.h"
 
 // Forward Declared Classes
 class FastLedZone;
@@ -92,26 +93,29 @@ protected:
     return false;
   };
 
-
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-
-
   void set_brightness();
+
   // **************************************************************************
   // See implementation file for details
   // **************************************************************************
-bool fade_out(bool aFirstTimeInState);
+  bool fade_out(bool aFirstTimeInState);
   bool fade_in(bool aFirstTimeInState);
 
   bool         mEnabled;
   int16_t      mDelay;
   FastLedZone* mZone;
-  int mFadeBrightness;
-  int mFadeDelay;
+  int          mFadeBrightness;
+  int          mFadeDelay;
+  LogWrapper*  mLog;
 
 private:
+
+  const char* get_state_name();
+
+
   EffectState  mState;
   char*        mEffectName;
   bool         mFirstTimeInState;

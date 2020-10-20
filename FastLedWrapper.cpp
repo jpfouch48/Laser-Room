@@ -27,6 +27,7 @@
 FastLedWrapper::FastLedWrapper() : 
   mZoneList()
 {
+  mLog = LogWrapper::get_instance();
 }
 
 // ****************************************************************************
@@ -105,8 +106,7 @@ void FastLedWrapper::set_color_red(uint8_t aValue, char* aZone)
 
   if(lZone == NULL)
   {
-    Serial.print(F("FLW::set_color_red - invalid zone: "));
-    Serial.println(aZone);
+    mLog->log("FLW::set_color_red - invalid zone: %s\r\n", aZone);
   }
   else
   {
@@ -155,8 +155,7 @@ void FastLedWrapper::set_color_green(uint8_t aValue, char* aZone)
 
   if(lZone == NULL)
   {
-    Serial.print(F("FLW::set_color_green - invalid zone: "));
-    Serial.println(aZone);
+    mLog->log("FLW::set_color_green - invalid zone: %s\r\n", aZone);
   }
   else
   {
@@ -205,8 +204,7 @@ void FastLedWrapper::set_color_blue(uint8_t aValue, char* aZone)
 
   if(lZone == NULL)
   {
-    Serial.print(F("FLW::set_color_blue - invalid zone: "));
-    Serial.println(aZone);
+    mLog->log("FLW::set_color_blue - invalid zone: %s\r\n", aZone);
   }
   else
   {
@@ -255,8 +253,7 @@ void FastLedWrapper::set_brightness(uint8_t aValue, char* aZone)
 
   if(lZone == NULL)
   {
-    Serial.print(F("FLW::set_brightness - invalid zone: "));
-    Serial.println(aZone);
+    mLog->log("FLW::set_brightness - invalid zone: %s\r\n", aZone);
   }
   else
   {
@@ -305,8 +302,7 @@ void FastLedWrapper::set_enabled(bool aValue, char* aZone)
 
   if(lZone == NULL)
   {
-    Serial.print(F("FLW::set_brightness - invalid zone: "));
-    Serial.println(aZone);
+    mLog->log("FLW::set_brightness - invalid zone: %s\r\n", aZone);
   }
   else
   {
@@ -359,8 +355,7 @@ bool FastLedWrapper::set_effect(const char *aEffectName, char* aZone)
   if(lZone != NULL)
     return lZone->set_effect(aEffectName);
 
-  Serial.print(F("Zone Not Found: "));
-  Serial.println(aZone);
+  mLog->log("Zone Not Found: %s\r\n", aZone);
 
   return false;
 }

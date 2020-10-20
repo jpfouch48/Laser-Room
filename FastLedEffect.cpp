@@ -32,7 +32,8 @@ FastLedEffect::FastLedEffect(char *aEffectName, FastLedZone *aZone, int aEffectD
     mFirstTimeInState(true),
     mFadeBrightness(-1),
     mFadeDelay(10)
-{ 
+{
+  mLog = LogWrapper::get_instance(); 
   set_state(EffectState::PatterState_Init);
 }
 
@@ -50,6 +51,7 @@ FastLedEffect::FastLedEffect(char *aEffectName, FastLedZone *aZone, int aEffectD
 // ****************************************************************************
 void FastLedEffect::reset() 
 { 
+  mLog->log("FLE - reset(%s)\r\n", mZone->get_zone_name());
   set_state(EffectState::PatterState_Init); 
 }
 
@@ -94,7 +96,7 @@ bool FastLedEffect::loop()
     default:
       EVERY_N_MILLISECONDS(5000) 
       {      
-        Serial.println(F("Running Complete State"));
+        mLog->log("FLE - loop(%s) : running complete state\r\n", mZone->get_zone_name());
         // Do nothing here as this effect ran to completion
       }
     break;
@@ -124,28 +126,33 @@ void FastLedEffect::set_state(EffectState aValue)
   mState = aValue;
   mFirstTimeInState = true;
 
+  mLog->log("FLE - set_state(%s) - %s\r\n", 
+    mZone->get_zone_name(), 
+    get_state_name());
+}
+
+
+// ****************************************************************************
+// Function:
+// ****************************************************************************
+// Arguments:
+//
+// ****************************************************************************
+// Description:
+//
+// ****************************************************************************
+// Notes:
+//
+// ****************************************************************************
+const char* FastLedEffect::get_state_name()
+{
   switch(mState)
   {
-    case EffectState::PatterState_Init:
-      Serial.println(F("FL: Entering Init State"));
-    break;
-
-    case EffectState::PatterState_Process:
-      Serial.println(F("FL: Entering Process State"));
-    break;
-
-    case EffectState::PatterState_End:
-      Serial.println(F("FL: Entering End State"));
-    break;    
-
-    case EffectState::PatterState_Complete:
-      Serial.println(F("FL: Entering Complete State"));
-    break;
-
-    default:
-      
-      Serial.println(F("FL: Unknown State"));
-    break;
+    case EffectState::PatterState_Init:     return "Init";
+    case EffectState::PatterState_Process:  return "Process"; 
+    case EffectState::PatterState_End:      return "End";
+    case EffectState::PatterState_Complete: return "Complete";
+    default:                                return "???";
   }
 }
 
@@ -163,6 +170,10 @@ void FastLedEffect::set_state(EffectState aValue)
 // ****************************************************************************
 void FastLedEffect::set_enabled(bool aValue)
 {
+  mLog->log("FLE - set_state(%s) - %s\r\n", 
+    mZone->get_zone_name(), 
+    ((aValue==true) ? "TRUE" : "FALSE"));
+
   // We are already in the state enable requested
   if(aValue == mEnabled)
     return;
@@ -170,15 +181,9 @@ void FastLedEffect::set_enabled(bool aValue)
   mEnabled = aValue;
 
   if(mEnabled == true)
-  {
-    Serial.println(F("FL: Effect Enabled - Init State"));
     set_state(EffectState::PatterState_Init);
-  }
   else
-  {
-    Serial.println(F("FL: Effect Disabled - End State"));
     set_state(EffectState::PatterState_End);
-  }
 }
 
 // ****************************************************************************

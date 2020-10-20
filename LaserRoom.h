@@ -20,6 +20,7 @@
 #include "src/DHTWrapper/DHTWrapper.h"
 #include "src/DallasTempWrapper/DallasTempWrapper.h"
 #include "src/LinkedList.h"
+#include "src/LogWrapper.h"
 
 // ****************************************************************************
 //
@@ -93,10 +94,13 @@ private:
   // Status variables
   char mIpAddress[20];
 
+  // Logger
+  LogWrapper *mLog;
+
   // Used to throttle state transitions for testing purposes
   // when wifi and mqtt are disabled
   int mChangeCount;
-
+  
   AppState mAppState;
 };
 

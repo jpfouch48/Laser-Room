@@ -20,6 +20,7 @@
 #include "FastLedEffectFire.h"
 
 #include "src/LinkedList.h"
+#include "src/LogWrapper.h"
 
 // Forward Declared Classes
 class FastLedEffect;
@@ -411,6 +412,7 @@ private:
   FastLedEffectIndexer       mEffectIndexer;
   FastLedEffectFire          mEffectFire;
   LinkedList<FastLedEffect*> mEffectList;  
+  LogWrapper*                mLog;
 };
 
 #endif

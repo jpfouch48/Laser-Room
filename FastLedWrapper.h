@@ -15,6 +15,7 @@
 #include "Configuration.h"
 
 #include "src/LinkedList.h"
+#include "src/LogWrapper.h"
 
 // Forward Declarations
 class FastLedZone;
@@ -107,6 +108,7 @@ protected:
 private:
   CRGB                       mLeds[RGB_NUM_LEDS];
   LinkedList<FastLedZone*>   mZoneList;
+  LogWrapper*                mLog;
 };
 
 #endif

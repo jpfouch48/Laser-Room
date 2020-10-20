@@ -25,9 +25,9 @@
 //
 // ****************************************************************************
 FastLedEffectCylon::FastLedEffectCylon(FastLedZone *aZone) : 
-  FastLedEffect("cylon", aZone, 10),
-  mReturnDelay(50),
-  mSize(4),
+  FastLedEffect("cylon", aZone, 100),
+  mReturnDelay(200),
+  mSize(5),
   mInc(1),
   mIndex(-1)
 { 
@@ -112,7 +112,7 @@ bool FastLedEffectCylon::process(bool aFirstTimeInState)
     // -mInc - Moving from End of Zone to 0
     else
     {
-      if(mIndex <= -mSize)
+      if(mIndex < -mSize)
       {
         delay(mReturnDelay); // TODO: GET RID OF THIS
         mIndex = -mSize;
