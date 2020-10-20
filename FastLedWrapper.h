@@ -19,6 +19,7 @@
 
 // Forward Declarations
 class FastLedZone;
+class FastLedEffect;
 
 // ****************************************************************************
 //
@@ -82,6 +83,11 @@ public:
   // See implementation file for details
   // **************************************************************************
   const char* get_effect_name(char* aZone);
+
+  // **************************************************************************
+  // See implementation file for details
+  // **************************************************************************
+  Iterator<FastLedEffect*> get_effect_list(char* aZone);
 
   // **************************************************************************
   // See implementation file for details

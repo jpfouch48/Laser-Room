@@ -510,6 +510,30 @@ const char* FastLedWrapper::get_effect_name(char* aZone)
 // Notes:
 //
 // ****************************************************************************
+Iterator<FastLedEffect*> FastLedWrapper::get_effect_list(char* aZone)
+{
+  FastLedZone* lZone = get_zone(aZone);
+
+  // TODO: NEED AN ERROR 
+  if(lZone == NULL || lZone->get_effect() == NULL)
+    return NULL;   
+
+  return lZone->get_effect_list();
+}
+
+
+// ****************************************************************************
+// Function:
+// ****************************************************************************
+// Arguments:
+//
+// ****************************************************************************
+// Description:
+//
+// ****************************************************************************
+// Notes:
+//
+// ****************************************************************************
 Iterator<FastLedZone*> FastLedWrapper::get_zones()
 { 
   return mZoneList.begin();   
@@ -553,14 +577,6 @@ void FastLedWrapper::setup()
   // Setup Fast LED
   FastLED.addLeds<RGB_LED_TYPE, RGB_PIN, RGB_COLOR_ORDER>(mLeds, RGB_NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setMaxPowerInVoltsAndMilliamps(12, 10000); //experimental for power management. Feel free to try in your own setup.
-
-//    Iterator<FastLedZone*> lIter = mZoneList.begin();
-//    while(lIter != NULL)
-//    {
-//      (*lIter)->get_effect()->set_enabled(true);
-//      lIter++;
-//    }
-//    loop();
 }
 
 // ****************************************************************************

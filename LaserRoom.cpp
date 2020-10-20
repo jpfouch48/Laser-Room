@@ -453,15 +453,16 @@ void LaserRoom::publish_led_data(char *aZone)
   static char lSzBuffer[200];
   lJsonBuffer["state"]      = (mRgbWrapper.get_enabled(aZone)) ? MQTT_LED_CMD_ON : MQTT_LED_CMD_OFF;
   lJsonBuffer["brightness"] = mRgbWrapper.get_brightness(aZone);
-  lJsonBuffer['effect']     = mRgbWrapper.get_effect_name(aZone);
+  lJsonBuffer["effect"]     = mRgbWrapper.get_effect_name(aZone);
 
   JsonObject lColor  = lJsonBuffer.createNestedObject("color");
   lColor["r"]        = mRgbWrapper.get_color_red(aZone);
   lColor["g"]        = mRgbWrapper.get_color_green(aZone);
   lColor["b"]        = mRgbWrapper.get_color_blue(aZone);
 
-//  JsonArray lEffects = lJsonBuffer.createNestedArray("effect-list");
-//  Iterator<FastLedEffect *> lIter = gRgbWrapper.get_effects();
+//  // TODO: THIS SHOULD BE ONLY SENT ONCE
+//  JsonArray lEffects = lJsonBuffer.createNestedArray("effect_list");
+//  Iterator<FastLedEffect *> lIter = mRgbWrapper.get_effect_list(aZone);
 //  while(lIter != NULL)
 //  {
 //    lEffects.add((*lIter)->get_effect_name());

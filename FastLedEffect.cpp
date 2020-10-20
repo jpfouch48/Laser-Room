@@ -93,12 +93,23 @@ bool FastLedEffect::loop()
     break;    
 
     case EffectState::PatterState_Complete:
-    default:
-      EVERY_N_MILLISECONDS(5000) 
-      {      
-        mLog->log("FLE - loop(%s) : running complete state\r\n", mZone->get_zone_name());
-        // Do nothing here as this effect ran to completion
+      if(mFirstTimeInState)
+      {
+        mLog->log("FLE - loop(%s) : state complete %d\r\n", 
+          mZone->get_zone_name());
+        mFirstTimeInState = false;
       }
+    break;
+
+    default:
+      if(mFirstTimeInState)
+      {
+        mLog->log("FLE - loop(%s) : running Invalid state %d\r\n", 
+          mZone->get_zone_name(),
+          mState);
+        mFirstTimeInState = false;
+      }
+
     break;
   }
 
@@ -170,7 +181,7 @@ const char* FastLedEffect::get_state_name()
 // ****************************************************************************
 void FastLedEffect::set_enabled(bool aValue)
 {
-  mLog->log("FLE - set_state(%s) - %s\r\n", 
+  mLog->log("FLE - set_enabled(%s) - %s\r\n", 
     mZone->get_zone_name(), 
     ((aValue==true) ? "TRUE" : "FALSE"));
 
