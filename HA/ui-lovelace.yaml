@@ -1,0 +1,68 @@
+title: Laser Room
+
+# https://materialdesignicons.com/
+# /local/custom_ui
+
+resources:
+  - url: /local/community/button-card/button-card.js
+    type: module
+  - url: /local/community/light-entity-card/light-entity-card.js
+    type: module
+  - url: /local/community/mini-graph-card/mini-graph-card-bundle.js
+    type: module
+  - url: /local/community/entity-attributes-card/entity-attributes-card.js
+    type: module
+
+################################################################################
+#
+#
+################################################################################
+views:        
+  - id: 0
+    panel: true
+    icon: mdi:laser-pointer
+    name: Laser Room
+    cards:
+      - type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          cards:
+            - type: custom:light-entity-card
+              entity: light.laser_room_led_zone_1
+              full_width_sliders: true
+            - type: custom:light-entity-card
+              entity: light.laser_room_led_zone_2
+              full_width_sliders: true
+            - type: custom:light-entity-card
+              entity: light.laser_room_led_zone_3
+              full_width_sliders: true
+        - type: horizontal-stack
+          cards:
+            - type: entities
+              title: Laser Room Info
+              entities:          
+                - sensor.laser_room_version
+                - sensor.laser_room_ip
+            - type: custom:mini-graph-card
+              entities:
+              - entity: sensor.laser_room_temperature
+                name: Laser Room Temp
+                color: green              
+                show_points: false
+              - entity: sensor.laser_room_chiller_temperature
+                name: Chiller Temp
+                color: red              
+                show_points: false
+              - entity: sensor.laser_room_dew_point
+                name: Dew Point
+                color: blue              
+                show_points: false
+              - entity: sensor.laser_room_humidity
+                name: Laser Room Humidity
+                color: orange              
+                show_points: false
+              line_color: blue
+              font_size: 100  
+              hours_to_show: 1
+              points_per_hour: 60
+              line_width: 5

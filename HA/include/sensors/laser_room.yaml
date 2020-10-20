@@ -1,0 +1,33 @@
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_sensor"
+    name: "Laser Room Temperature"
+    unit_of_measurement: "F"
+    value_template: "{{ value_json.temperature }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_sensor"
+    name: "Laser Room Humidity"
+    unit_of_measurement: "%"
+    value_template: "{{ value_json.humidity }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_sensor"
+    name: "Laser Room Dew Point"
+    unit_of_measurement: "F"
+    value_template: "{{ value_json.dewpoint }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_chiller_sensor"
+    name: "Laser Room Chiller Temperature"
+    unit_of_measurement: "F"
+    value_template: "{{ value_json.temperature }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_status_sensor"
+    name: "Laser Room Version"
+    value_template: "{{ value_json.version }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_status_sensor"
+    name: "Laser Room IP"
+    value_template: "{{ value_json.ip }}"

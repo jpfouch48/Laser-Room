@@ -55,6 +55,20 @@ sensor:
     value_template: "{{ value_json.dewpoint }}"
 ```
 
+### Status Sensor
+```
+sensor:
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_status_sensor"
+    name: "Laser Room Version"
+    value_template: "{{ value_json.version }}"
+
+  - platform: mqtt
+    state_topic: "laser_room/laser_room_status_sensor"
+    name: "Laser Room IP"
+    value_template: "{{ value_json.ip }}"
+```
+
 ### Chiller Temp Sensor
 ```
 sensor:
@@ -70,23 +84,52 @@ sensor:
 light:  
   - platform: mqtt  
     schema: json  
-    name: "Laser Room LED"  
-    state_topic: "laser_room/laser_room_led"  
-    command_topic: "laser_room/laser_room_led/set"  
+    qos: 0  
+    name: "Laser Room LED Zone 1"  
+    state_topic: "laser_room/laser_room_led/zone1"  
+    command_topic: "laser_room/laser_room_led/zone1/set"  
     brightness: true  
     rgb: true  
-    white_value: false
-    optimistic: false  
     effect: true
     effect_list:
       - solid
       - cylon
       - twinkle
       - indexer
+      - fire
+  - platform: mqtt  
+    schema: json  
+    qos: 0      
+    name: "Laser Room LED Zone 2"  
+    state_topic: "laser_room/laser_room_led/zone2"  
+    command_topic: "laser_room/laser_room_led/zone2/set"  
+    brightness: true  
+    rgb: true  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
+      - indexer
+      - fire
+  - platform: mqtt  
+    schema: json  
     qos: 0  
+    name: "Laser Room LED Zone 3"  
+    state_topic: "laser_room/laser_room_led/zone3"  
+    command_topic: "laser_room/laser_room_led/zone3/set"  
+    brightness: true  
+    rgb: true  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
+      - indexer
+      - fire
 ```
 
-### RGB Status
+### Laser Room Status
 ```
 sensor
   - platform: mqtt
@@ -113,8 +156,17 @@ sensor
 
 #### Light Entry
 ```
-- type: custom:light-entity-card
-  entity: light.laser_room_led
+- type: horizontal-stack
+  cards:
+    - type: custom:light-entity-card
+      entity: light.laser_room_led_zone_1
+      full_width_sliders: true
+    - type: custom:light-entity-card
+      entity: light.laser_room_led_zone_2
+      full_width_sliders: true
+    - type: custom:light-entity-card
+      entity: light.laser_room_led_zone_3
+      full_width_sliders: true
 ```
 
 #### Temperature Entry
@@ -164,10 +216,10 @@ TODO
 - [X] Add over the air updates
 - [X] Add zones to LEDs to allow different zones to be controlled independently
 - [X] LED zones should have independent effects
+- [X] Fix issue where Wifi going down is not detected
 - [ ] Add a dynamic configuraiton system (json based) where each effect could house it's own unique params
 - [ ] Add configruation parameters for Chiller temp and have some kind of indication when outside a particular range (e.g 19C - 24C)
 - [ ] Add notification when Chiller temp approaches dew point (risk of condensation)
 - [ ] Update to have arduino send effect list to be more dynamic
 - [ ] Add ability to control without the need for Home Assistant
 - [ ] Add support for PIR to turn on leds when motion is detected
-- [ ] Fix issue where Wifi going down is not detected

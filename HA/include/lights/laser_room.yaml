@@ -1,0 +1,45 @@
+  - platform: mqtt  
+    schema: json  
+    qos: 0  
+    name: "Laser Room LED Zone 1"  
+    state_topic: "laser_room/laser_room_led/zone1"  
+    command_topic: "laser_room/laser_room_led/zone1/set"  
+    brightness: true  
+    rgb: true  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
+      - indexer
+      - fire
+  - platform: mqtt  
+    schema: json  
+    qos: 0      
+    name: "Laser Room LED Zone 2"  
+    state_topic: "laser_room/laser_room_led/zone2"  
+    command_topic: "laser_room/laser_room_led/zone2/set"  
+    brightness: true  
+    rgb: true  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
+      - indexer
+      - fire
+  - platform: mqtt  
+    schema: json  
+    qos: 0  
+    name: "Laser Room LED Zone 3"  
+    state_topic: "laser_room/laser_room_led/zone3"  
+    command_topic: "laser_room/laser_room_led/zone3/set"  
+    brightness: true  
+    rgb: true  
+    effect: true
+    effect_list:
+      - solid
+      - cylon
+      - twinkle
+      - indexer
+      - fire

@@ -151,7 +151,7 @@ void LaserRoom::loop()
           WiFi.localIP()[2], 
           WiFi.localIP()[3]);
 
-        mLog->log("WIFI Connected to %s - %s", WIFI_SSID, mIpAddress);
+        mLog->log("WIFI Connected to %s - %s\r\n", WIFI_SSID, mIpAddress);
 
 #ifndef DISABLE-MQTT
         mMqttClient.setServer(MQTT_SERVER_IP, MQTT_SERVER_PORT);  
@@ -181,8 +181,15 @@ void LaserRoom::loop()
   }
   else if(mAppState == LaserRoom::AppState::AppState_MqttConnecting)
   {
+
     EVERY_N_MILLISECONDS(10000)     
     {
+#ifndef DISABLE_WIFI      
+      if(WiFi.status() != WL_CONNECTED)
+      {
+          mLog->log("Wifi Disconnected\r\n");
+          change_state(LaserRoom::AppState::AppState_WifiConnecting);
+      } else
 #ifndef DISABLE_MQTT      
       if (!mMqttClient.connected()) 
       {
@@ -226,6 +233,15 @@ void LaserRoom::loop()
       if(mChangeCount >= 1) change_state(LaserRoom::AppState::AppState_Running);
     }
 #endif
+
+#else
+      // Throttle state transiton when WIFI is disabled to better
+      // debug state transitions
+      mChangeCount++;
+      if(mChangeCount >= 1) change_state(LaserRoom::AppState::AppState_Running);
+    }
+#endif
+
   }
   else if(mAppState == LaserRoom::AppState::AppState_Running)
   {
